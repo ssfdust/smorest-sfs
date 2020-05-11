@@ -57,4 +57,4 @@ def register_modules(app: Flask) -> None:
     为Flask实例注册项目的主要模块
     """
     modules.init_app(app)
-    errors.init_app(app)
+    # errors.init_app(app)
