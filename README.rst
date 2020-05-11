@@ -5,15 +5,15 @@ Smart-Smorest
    :target: https://www.python.org
    :alt: Python Version
 
-.. image:: https://api.codeclimate.com/v1/badges/0695c89c177ee9f70f12/maintainability
+.. image:: https://api.codeclimate.com/v1/badges/9387f1cccf11e2a5f4e5/maintainability
    :target: https://codeclimate.com/github/ssfdust/smorest-sfs/maintainability
    :alt: Maintainability
 
-.. image:: https://api.codeclimate.com/v1/badges/0695c89c177ee9f70f12/test_coverage
+.. image:: https://api.codeclimate.com/v1/badges/9387f1cccf11e2a5f4e5/test_coverage
    :target: https://codeclimate.com/github/ssfdust/smorest-sfs/test_coverage
    :alt: Test Coverage
 
-.. image:: https://api.codacy.com/project/badge/Grade/f10787550d1742e7b5765cdfed887ab2
+.. image:: https://api.codacy.com/project/badge/Grade/05b5fbe93bd04201846b83a4e6d7e082
    :target: https://www.codacy.com/manual/ssfdust/smorest-sfs?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ssfdust/smorest-sfs&amp;utm_campaign=Badge_Grade
 
 .. image:: https://travis-ci.org/ssfdust/smorest-sfs.svg?branch=master
