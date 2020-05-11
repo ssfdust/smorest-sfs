@@ -1,6 +1,10 @@
 Smart-Smorest
 ================
 
+.. image:: https://api.codacy.com/project/badge/Grade/d265f301554f4a0a93836bdd4800ddec
+   :alt: Codacy Badge
+   :target: https://app.codacy.com/manual/ssfdust/smorest-sfs?utm_source=github.com&utm_medium=referral&utm_content=ssfdust/smorest-sfs&utm_campaign=Badge_Grade_Dashboard
+
 .. image:: https://img.shields.io/badge/python-3.7%20|%203.8-0366d6
    :target: https://www.python.org
    :alt: Python Version
