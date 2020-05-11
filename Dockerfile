@@ -21,8 +21,8 @@ RUN /entrypoint.sh \
         -b jpeg-dev \
         -b freetype-dev \
         -b postgresql-dev \
-    && wget https://raw.githubusercontent.com/eficode/wait-for/master/wait-for -O /usr/bin/waitfor \
-    && chmod 755 /usr/bin/waitfor \
+    && wget https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh -O /usr/bin/wait-for-it \
+    && chmod 755 /usr/bin/wait-for-it \
     && mkdir Application
 
 RUN addgroup -g ${PGID} webapp && \
