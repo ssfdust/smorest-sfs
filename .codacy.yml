@@ -1,0 +1,5 @@
+engines:
+ duplication:
+   exclude_paths:
+     - "tests/modules/*/resources/test_general_access.py"
+     - "migrations/**"

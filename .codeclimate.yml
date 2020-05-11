@@ -1,0 +1,14 @@
+engines:
+    bandit:
+        enabled: true
+        checks:
+            assert_used:
+                enabled: false
+            blacklist:
+                enabled: false
+    duplication:
+        enabled: true
+exclude_patterns:
+    - "tasks/app/db.py"
+    - "tests/modules/*/resources/test_general_access.py"
+    - "migrations/"

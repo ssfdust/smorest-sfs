@@ -1,0 +1,17 @@
+upstream flask {
+    server 127.0.0.1:5000;
+}
+
+server {
+    listen       80;
+
+    add_header Access-Control-Allow-Origin *;
+    add_header Access-Control-Allow-Methods 'GET, POST, OPTIONS, PUT, DELETE, PATCH';
+    add_header Access-Control-Allow-Headers 'DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization';
+    add_header Access-Control-Expose-Headers 'Authorization';
+
+    location /api {
+        proxy_set_header Host $host;
+        proxy_pass http://flask/api;
+    }
+}

@@ -1,0 +1,132 @@
+"""
+    smorest_sfs.modules.{{ module_name }}.resource
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    {{ module_title }}的资源模块
+"""
+from typing import Any, Dict, List
+
+from flask.views import MethodView
+from flask_sqlalchemy import BaseQuery
+from loguru import logger
+
+from flask_jwt_extended import current_user
+from smorest_sfs.extensions.api.decorators import paginate
+from smorest_sfs.extensions.marshal.bases import (BaseIntListSchema,
+                                                  BaseMsgSchema,
+                                                  GeneralParam)
+from smorest_sfs.modules.auth import PERMISSIONS
+from smorest_sfs.modules.auth.decorators import (doc_login_required,
+                                                 permission_required)
+
+from . import blp, models, schemas
+
+
+@blp.route('/options')
+class {{ model_name }}ListView(MethodView):
+
+    @doc_login_required
+    @permission_required(PERMISSIONS.{{ model_name }}Query)
+    @blp.response(schemas.{{ model_name }}ListSchema)
+    def get(self) -> Dict[str, List[models.{{ model_name }}]]:
+        # pylint: disable=unused-argument
+        '''
+        获取所有{{ module_title }}选项信息
+        '''
+        query = models.{{ model_name }}.query
+
+        items = query.all()
+
+        return {'data': items}
+
+
+@blp.route('')
+class {{ model_name }}View(MethodView):
+
+    @doc_login_required
+    @permission_required(PERMISSIONS.{{ model_name }}Query)
+    @blp.arguments(GeneralParam, location="query", as_kwargs=True)
+    @blp.response(schemas.{{ model_name }}PageSchema)
+    @paginate()
+    def get(self, **kwargs: Dict[str, Any]) -> BaseQuery:
+        # pylint: disable=unused-argument
+        '''
+        获取所有{{ module_title }}信息——分页
+        '''
+        query = models.{{ model_name }}.where(**kwargs)
+
+        return query
+
+    @doc_login_required
+    @permission_required(PERMISSIONS.{{ model_name }}Add)
+    @blp.arguments(schemas.{{ model_name }}Schema)
+    @blp.response(schemas.{{ model_name }}ItemSchema)
+    def post(self, {{ module_name_singular }}: models.{{ model_name }}) -> Dict[str, models.{{ model_name }}]:
+        # pylint: disable=unused-argument
+        '''
+        新增{{ module_title }}信息
+        '''
+        {{ module_name_singular }}.save()
+        logger.info(f"{current_user.username}新增了{{ module_title }}{{ '{' + module_name_singular + '}' }}")
+
+        return {'data': {{ module_name_singular }}}
+
+    @doc_login_required
+    @permission_required(PERMISSIONS.{{ model_name }}Delete)
+    @blp.arguments(BaseIntListSchema, as_kwargs=True)
+    @blp.response(BaseMsgSchema)
+    def delete(self, lst: List[int]) -> None:
+        # pylint: disable=unused-argument
+        '''
+        批量删除{{ module_title }}
+        -------------------------------
+        :param lst: list 包含id列表的字典
+        '''
+
+        models.{{ model_name }}.delete_by_ids(lst)
+        logger.info(f"{current_user.username}删除了{{ module_title }}{lst}")
+
+
+@blp.route('/<int:{{ module_name_singular }}_id>',
+           parameters=[
+               {'in': 'path', 'name': '{{ module_name_singular }}_id', 'description': '{{ module_title }}id'}
+           ])
+class {{ model_name }}ItemView(MethodView):
+
+    @doc_login_required
+    @permission_required(PERMISSIONS.{{ model_name }}Edit)
+    @blp.arguments(schemas.{{ model_name }}Schema)
+    @blp.response(schemas.{{ model_name }}ItemSchema)
+    def put(self, {{ module_name_singular }}: models.{{ model_name }}, {{ module_name_singular }}_id: int) -> Dict[str, models.{{ model_name }}]:
+        '''
+        更新{{ module_title }}
+        '''
+
+        {{ module_name_singular }} = models.{{ model_name }}.update_by_id({{ module_name_singular }}_id,
+                                                                        schemas.{{ model_name }}Schema,
+                                                                        {{ module_name_singular }})
+        logger.info(f"{current_user.username}更新了{{ module_title }}{{ '{' + module_name_singular + '.id}' }}")
+
+        return {'data': {{ module_name_singular }}}
+
+    @doc_login_required
+    @permission_required(PERMISSIONS.{{ model_name }}Delete)
+    @blp.response(BaseMsgSchema)
+    def delete(self, {{ module_name_singular }}_id: int) -> None:
+        '''
+        删除{{ module_title }}
+        '''
+        models.{{ model_name }}.delete_by_id({{ module_name_singular }}_id)
+        logger.info(f"{current_user.username}删除了{{ module_title }}{{ '{' + module_name_singular + '_id}' }}")
+
+    @doc_login_required
+    @permission_required(PERMISSIONS.{{ model_name }}Query)
+    @blp.response(schemas.{{ model_name }}ItemSchema)
+    def get(self, {{ module_name_singular }}_id: int) -> Dict[str, models.{{ model_name }}]:
+        # pylint: disable=unused-argument
+        '''
+        获取单条{{ module_title }}
+        '''
+        {{ module_name_singular }} = models.{{ model_name }}.get_by_id({{ module_name_singular }}_id)
+
+        return {'data': {{ module_name_singular }}}

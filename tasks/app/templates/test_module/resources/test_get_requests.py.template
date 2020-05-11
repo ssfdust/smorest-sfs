@@ -1,0 +1,28 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from typing import List
+
+from smorest_sfs.modules.auth import ROLES
+from smorest_sfs.modules.{{module_name}}.models import {{ model_name }}
+from tests._utils.injection import GeneralGet
+
+
+class TestListView(GeneralGet):
+
+    fixture_names = ("flask_app_client", "flask_app", "regular_user", "{{ module_name_singular }}_items")
+    item_view = "{{ model_name }}.{{ model_name }}ItemView"
+    listview = "{{ model_name }}.{{ model_name }}ListView"
+    view = "{{ model_name }}.{{ model_name }}View"
+    login_roles = [ROLES.{{ model_name }}Manager]
+    {{ module_name_singular }}_items: List[{{ model_name }}]
+
+    def test_get_options(self) -> None:
+        self._get_options()
+
+    def test_get_list(self) -> None:
+        data = self._get_list(name="t")
+        assert data[0].keys() > {"id", "name"}
+
+    def test_get_item(self) -> None:
+        data = self._get_item({{ module_name_singular }}_id=self.{{ module_name_singular }}_items[0].id)
+        assert data.keys() >= {"id", "name"}

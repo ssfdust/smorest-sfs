@@ -1,0 +1,11 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+import pytest
+
+from smorest_sfs.modules.{{module_name}}.models import {{ model_name }}
+
+
+@pytest.mark.usefixtures("flask_app")
+def test_{{ module_name_singular }}() -> None:
+    name = str({{ model_name }}.create(name="test"))
+    assert name == "test"

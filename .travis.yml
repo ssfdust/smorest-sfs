@@ -1,0 +1,37 @@
+language: python
+python:
+  - "3.8"
+sudo: false
+env:
+    global:
+        - CC_TEST_REPORTER_ID=1dbbc0a693f184d81a4cf1430116855dd646950d1cd54981f5ae8e1f0a32c41f
+notifications:
+  email: false
+jobs:
+    include:
+        - dist: bionic
+services:
+    - rabbitmq
+    - redis
+    - postgresql
+addons:
+  apt:
+      packages:
+          - rabbitmq-server
+          - redis-server
+          - xclip
+          - xvfb
+before_install:
+    - createuser -d "smorest-admin"
+    - createdb "smorest-testing" -O "smorest-admin" -U "smorest-admin"
+    - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+    - chmod +x ./cc-test-reporter
+    - ./cc-test-reporter before-build --debug
+install:
+    - curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+    - PATH="${PATH}:$HOME/.poetry/bin"
+    - poetry config virtualenvs.create false && poetry install --no-interaction --no-ansi
+script:
+    - xvfb-run pytest tests --cov smorest_sfs --cov-report xml
+after_success:
+    - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT

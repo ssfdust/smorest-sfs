@@ -1,0 +1,44 @@
+"""
+    smorest_sfs.modules.{{ module_name }}.schemas
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    {{ module_title }}模块的Schemas
+"""
+from smorest_sfs.extensions.marshal import BasePageSchema, BaseMsgSchema, SQLAlchemyAutoSchema
+from marshmallow import fields, Schema
+
+from . import models
+
+
+class {{ model_name }}Schema(SQLAlchemyAutoSchema):
+    """
+    {{ module_title }}的序列化类
+    """
+
+    class Meta:
+        model = models.{{ model_name }}
+
+
+class {{ model_name }}PageSchema(BasePageSchema):
+    """{{ module_title }}的分页"""
+
+    data = fields.List(fields.Nested({{ model_name }}Schema))
+
+
+class {{ model_name }}ItemSchema(BaseMsgSchema):
+    """{{ module_title }}的单项"""
+
+    data = fields.Nested({{ model_name }}Schema)
+
+
+class {{ model_name }}OptsSchema(Schema):
+    """{{ module_title }}的选项"""
+
+    class Meta:
+        fields = ('id', 'name')
+
+
+class {{ model_name }}ListSchema(Schema):
+    """{{ module_title }}的选项列表"""
+
+    data = fields.List(fields.Nested({{ model_name }}OptsSchema))

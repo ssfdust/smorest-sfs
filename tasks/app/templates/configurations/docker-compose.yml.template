@@ -1,0 +1,56 @@
+version: '3.5'
+
+services:  
+
+  rabbit:
+    image: rabbitmq:latest
+    environment:
+      RABBITMQ_DEFAULT_USER: {{ mq_user }}
+      RABBITMQ_DEFAULT_PASS: {{ mq_passwd }}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:15672"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  db:
+    image: ssfdust/psql_jieba_swsc:latest
+    ports:
+      - "9432:5432"
+    environment:
+      POSTGRES_USER: {{ '${POSTGRES_USER:-' + db_username + '}' }}
+      POSTGRES_PASSWORD: {{ '${POSTGRES_PASSWORD:-' + db_password + '}' }}
+      POSTGRES_DB: {{ '${POSTGRES_DB:-' + db_name + '}' }}
+      PGDATA: /data/postgres
+
+  web:
+    image: ssfdust/full-stack-flask-smorest:latest
+    volumes:
+      - .:/Application 
+    ports:
+      - "9001:5000"
+    restart: on-failure
+    depends_on:
+      - rabbit
+      - db
+
+  worker:
+    image: ssfdust/full-stack-flask-smorest:latest
+    command: inv app.celery
+    restart: on-failure
+    volumes:
+      - .:/Application
+    depends_on:
+      - rabbit
+      - db
+
+  beat:
+    image: ssfdust/full-stack-flask-smorest:latest
+    command: inv app.celery.beat
+    restart: on-failure
+    volumes:
+      - .:/Application
+    depends_on:
+      - rabbit
+      - db

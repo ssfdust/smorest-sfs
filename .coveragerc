@@ -1,0 +1,13 @@
+[report]
+exclude_lines =
+    # Have to re-enable the standard pragma
+    pragma: no cover
+
+    # We don't test get_by_name and __str__
+    def get_by_name
+    def __str__
+
+    # Don't complain if tests don't hit defensive assertion code:
+    raise NotImplementedError
+
+    pass

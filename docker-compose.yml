@@ -1,0 +1,79 @@
+version: '3.5'
+
+services:  
+    db:
+        image: ssfdust/psql_jieba_swsc
+        environment:
+            POSTGRES_USER: ${POSTGRES_USER:-smorest-admin}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-smorest2019}
+            POSTGRES_DB: ${POSTGRES_DB:-smorest-production}
+            PGDATA: /data/postgres
+
+    redis:
+        image: redis:5.0.9-alpine
+        command: redis-server
+
+    rabbitmq:
+        image: rabbitmq:3.8.3-management-alpine
+        expose: 
+            - "15672"
+        environment:
+            RABBITMQ_DEFAULT_USER: admin
+            RABBITMQ_DEFAULT_PASS: admin
+            RABBITMQ_DEFAULT_VHOST: smorest
+            VIRTUAL_HOST: rabbitmq.local
+
+    nginx:
+        image: nginx:stable-alpine
+        ports:
+            - "8083:8083"
+        volumes:
+            - ./deploy/nginx/flask.conf:/etc/nginx/conf.d/default.conf:ro
+        depends_on:
+            - pgadmin4
+            - rabbitmq
+            - web
+
+    web:
+        image: ssfdust/smorest-sfs
+        volumes:
+            - .:/Application 
+        restart: on-failure
+        expose: 
+            - "8000"
+        depends_on:
+            - db
+            - rabbitmq
+            - redis
+        environment:
+            - VIRTUAL_HOST=smorest.local
+            - WEB_CONCURRENCY=2
+
+    beat:
+        image: ssfdust/smorest-sfs
+        volumes:
+            - .:/Application 
+        depends_on:
+            - web
+        environment:
+            APP: beat
+
+    celery:
+        image: ssfdust/smorest-sfs
+        volumes:
+            - .:/Application 
+        depends_on:
+            - web
+        environment:
+            APP: celery
+
+    pgadmin:
+        image: dpage/pgadmin4
+        ports:
+            - "8084:8084"
+        expose: 
+            - "80"
+        environment:
+            - PGADMIN_LISTEN_PORT=8084
+            - PGADMIN_DEFAULT_EMAIL=admin@mail.com
+            - PGADMIN_DEFAULT_PASSWORD=admin

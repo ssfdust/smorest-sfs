@@ -1,0 +1,10 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+    app.modules.{{ module_name }}
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    {{ module_title }}模块
+"""
+from flask_smorest import Blueprint
+
+blp = Blueprint('{{ model_name }}', __name__, url_prefix='/{{ module_name }}', description='{{ module_title }}模块')

@@ -1,0 +1,22 @@
+"""
+    smorest_sfs.modules.{{ module_name }}.models
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    {{ module_title }}的ORM模块
+"""
+from smorest_sfs.extensions.sqla import Model, SurrogatePK, db
+
+
+class {{ model_name }}(Model, SurrogatePK):
+    """
+    {{ module_title }}
+
+    :attr name: str(128) {{ module_title }}名称
+    """
+
+    __tablename__ = "{{ module_name }}"
+
+    name = db.Column(db.String(length=128), nullable=False, doc="{{ module_title }}名称")
+
+    def __repr__(self) -> str:
+        return self.name
