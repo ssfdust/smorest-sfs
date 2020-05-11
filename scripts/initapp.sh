@@ -1,7 +1,7 @@
 #!/bin/sh
-wait-for-it -t 300 db:5432 -- echo "Database is ready"
-wait-for-it -t 300 redis:6379 -- echo "Redis is ready"
-wait-for-it -t 300 rabbitmq:5432 -- echo "Rabbitmq is ready"
+wait-for-it -t 150 db:5432 -- echo "Database is ready"
+wait-for-it -t 20 redis:6379 -- echo "Redis is ready"
+wait-for-it -t 20 rabbitmq:5672 -- echo "Rabbitmq is ready"
 if [ "$APP" = "web" ];then
     flask db upgrade
     gunicorn -k "egg:meinheld#gunicorn_worker" -c gunicorn.py smorest_sfs.app:app
