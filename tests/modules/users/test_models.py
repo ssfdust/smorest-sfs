@@ -37,6 +37,10 @@ class TestUserInfo(FixturesInjectBase):
 @pytest.mark.usefixtures("flask_app")
 def test_model_creation() -> None:
     user = User.create(username="1212", password="1212", userinfo=UserInfo())
-    assert user.nickname == "1212" and user.password == "1212" and str(user.userinfo) == "1212"
+    assert (
+        user.nickname == "1212"
+        and user.password == "1212"
+        and str(user.userinfo) == "1212"
+    )
     UserInfo.query.filter_by(id=user.userinfo.id).delete()
     User.query.filter_by(id=user.id).delete()

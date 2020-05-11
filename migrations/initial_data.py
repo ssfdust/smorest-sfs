@@ -11,10 +11,10 @@ from smorest_sfs.modules.auth.permissions import (
 )
 from smorest_sfs.modules.auth.permissions import PERMISSIONS, ROLES
 from smorest_sfs.modules.email_templates.models import EmailTemplate
+from smorest_sfs.modules.groups.models import Group
 from smorest_sfs.modules.roles.models import Permission, Role
 from smorest_sfs.modules.storages.models import Storages
 from smorest_sfs.modules.users.models import Model, User, UserInfo
-from smorest_sfs.modules.groups.models import Group
 from smorest_sfs.utils.storages import load_avator_from_path
 
 

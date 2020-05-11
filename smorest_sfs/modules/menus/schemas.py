@@ -6,7 +6,6 @@
 """
 from marshmallow import Schema, fields
 
-from smorest_sfs.extensions import ma
 from smorest_sfs.extensions.marshal import BaseMsgSchema, SQLAlchemyAutoSchema
 
 from . import models

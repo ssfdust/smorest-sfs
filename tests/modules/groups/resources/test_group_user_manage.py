@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import Any, Dict, List, Set
 from functools import reduce
-from deepdiff import DeepDiff
+from typing import Any, Dict, List, Set
 
 import pytest
+from deepdiff import DeepDiff
 
 from smorest_sfs.modules.auth import ROLES
 from smorest_sfs.modules.groups.models import Group
@@ -26,6 +26,7 @@ class TestGroupRoleManager(GeneralModify):
     """
     group_1: fake_2
     """
+
     fake_roles: List[Role]
     fake_groups: List[Group]
     fake_users: List[User]
@@ -98,12 +99,14 @@ class TestGroupRoleManager(GeneralModify):
                         "root[5]['roles'][1]": {"name": "b"},
                         "root[5]['roles'][2]": {"name": "c"},
                     },
-                }
+                },
             ),
-            ([1], {})
+            ([1], {}),
         ],
     )
-    def test_simple_group_modify(self, user_idxlst: List[int], diff: Dict[str, Any]) -> None:
+    def test_simple_group_modify(
+        self, user_idxlst: List[int], diff: Dict[str, Any]
+    ) -> None:
         assert diff == self._modify_group(user_idxlst)
 
     def _get_modified_item(self) -> Group:

@@ -24,7 +24,7 @@
 
 from marshmallow import Schema, fields
 
-from smorest_sfs.extensions.marshal import SQLAlchemyAutoSchema, auto_field
+from smorest_sfs.extensions.marshal import SQLAlchemyAutoSchema
 from smorest_sfs.extensions.marshal.bases import BaseMsgSchema, BasePageSchema
 
 from . import models

@@ -3,7 +3,7 @@
 import os
 import shutil
 import uuid
-from typing import Any, Callable, Iterator, Tuple, Type, Union
+from typing import Any, Callable, Iterator, Tuple, Union
 
 import pytest
 from _pytest.monkeypatch import MonkeyPatch

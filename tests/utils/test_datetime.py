@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import datetime
 
 import pendulum
-import pytest
 from freezegun import freeze_time
 
 from smorest_sfs.utils.datetime import (

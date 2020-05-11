@@ -4,7 +4,7 @@
 
     日志的资源模块
 """
-from typing import Any, List
+from typing import Any
 
 from flask.views import MethodView
 from flask_sqlalchemy import BaseQuery

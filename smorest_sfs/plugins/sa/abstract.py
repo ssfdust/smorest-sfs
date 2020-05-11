@@ -12,8 +12,8 @@ from typing import Any, List, Union
 import pyperclip
 import sqlparse
 from loguru import logger
-from sqlalchemy.dialects import postgresql
 from sqlalchemy import delete, insert, select, update
+from sqlalchemy.dialects import postgresql
 
 from .render import TableRender
 

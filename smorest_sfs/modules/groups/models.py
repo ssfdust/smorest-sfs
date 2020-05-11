@@ -44,7 +44,7 @@ class Group(Model, SurrogatePK, BaseNestedSets):
         foreign_keys="[groups_users.c.group_id, groups_users.c.user_id]",
         active_history=True,
         lazy="joined",
-        info={"marshmallow": {"column": ["id", "username"]}}
+        info={"marshmallow": {"column": ["id", "username"]}},
     )
     roles = db.relationship(
         "Role",
@@ -55,7 +55,7 @@ class Group(Model, SurrogatePK, BaseNestedSets):
         foreign_keys="[groups_roles.c.group_id, groups_roles.c.role_id]",
         active_history=True,
         lazy="joined",
-        info={"marshmallow": {"column": ["id", "name"]}}
+        info={"marshmallow": {"column": ["id", "name"]}},
     )
 
     @classmethod

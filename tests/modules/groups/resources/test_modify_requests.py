@@ -28,12 +28,7 @@ class TestGroupModify(GeneralModify):
 
     def test_item_modify(self) -> None:
         data = self._item_modify_request(
-            json={
-                "name": "qq",
-                "description": "",
-                "default": True,
-                "roles": [],
-            }
+            json={"name": "qq", "description": "", "default": True, "roles": [],}
         )
         assert data["name"] == "qq"
 

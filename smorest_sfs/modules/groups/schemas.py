@@ -7,11 +7,10 @@
 from marshmallow import Schema, fields
 
 from smorest_sfs.extensions.marshal import (
-    auto_field,
     BaseMsgSchema,
     BasePageSchema,
     SQLAlchemySchema,
-    SQLAlchemyAutoSchema,
+    auto_field,
 )
 
 from . import models
@@ -21,6 +20,7 @@ class GroupSchema(SQLAlchemySchema):
     """
     用户组的序列化类
     """
+
     id = auto_field(dump_only=True)
     name = auto_field()
     default = auto_field()
@@ -37,6 +37,7 @@ class GroupUserSchema(SQLAlchemySchema):
     """
     用户组的序列化类
     """
+
     users = auto_field(load_only=True)
 
     class Meta:

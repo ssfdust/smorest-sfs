@@ -18,7 +18,6 @@
     验证模块
 """
 from datetime import timedelta
-from typing import Optional
 
 from flask import current_app as app
 from flask_jwt_extended import create_access_token, get_raw_jwt

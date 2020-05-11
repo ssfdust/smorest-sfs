@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 
-from typing import Any, Dict, List, Set
 from functools import reduce
+from typing import Any, Dict, List, Set
 
 import pytest
 
@@ -16,7 +16,9 @@ from tests._utils.injection import GeneralModify
 
 def get_roles(res: Dict[str, Any]) -> Set[str]:
     uids = [i["id"] for i in res["users"]]
-    roles_iter = iter(set(r.name for r in user.roles) for user in User.where(id__in=uids).all())
+    roles_iter = iter(
+        set(r.name for r in user.roles) for user in User.where(id__in=uids).all()
+    )
     return reduce(lambda x, y: x & y, roles_iter)
 
 
@@ -37,12 +39,7 @@ class TestGroupRoleManager(GeneralModify):
     item_view = "Group.GroupItemView"
     login_roles = [ROLES.GroupManager]
     delete_param_key = "group_id"
-    data = {
-        "name": "temp_group",
-        "description": "",
-        "default": False,
-        "roles": []
-    }
+    data = {"name": "temp_group", "description": "", "default": False, "roles": []}
 
     def _modify_group(self, indexlst: List[int], roles: Set[str]) -> Group:
         self._set_up_user()
@@ -66,8 +63,8 @@ class TestGroupRoleManager(GeneralModify):
         "group_idxlst, role_idlst",
         [
             ([0], ["a"]),
-            ([0, 1, 2, 3], ["a", 'b', 'c', 'd']),
-            ([0, 3], ["a", 'd']),
+            ([0, 1, 2, 3], ["a", "b", "c", "d"]),
+            ([0, 3], ["a", "d"]),
             ([], []),
         ],
     )

@@ -7,7 +7,7 @@ from typing import Any, List, Type, Union
 
 from flask_sqlalchemy import _QueryProperty
 from marshmallow import Schema
-from sqlalchemy import Boolean, Column, DateTime, Integer
+from sqlalchemy import Boolean, Column, Integer
 from sqlalchemy_utils.types.enriched_datetime.enriched_datetime_type import (
     EnrichedDateTimeType,
 )
