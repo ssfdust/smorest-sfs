@@ -4,7 +4,7 @@ python:
 sudo: false
 env:
     global:
-        - CC_TEST_REPORTER_ID=1dbbc0a693f184d81a4cf1430116855dd646950d1cd54981f5ae8e1f0a32c41f
+        - CC_TEST_REPORTER_ID=7531ec371613d7a64e1dab0a98598801d78ae86c692a87a74e2e20f7133a490c
 notifications:
   email: false
 jobs:
