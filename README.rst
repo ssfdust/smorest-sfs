@@ -1,4 +1,4 @@
-Smart-Smorest
+Smorest Sync Full Stack -- Backend
 ================
 
 .. image:: https://img.shields.io/badge/python-3.7%20|%203.8-0366d6
