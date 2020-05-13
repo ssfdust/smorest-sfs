@@ -69,6 +69,8 @@ class AutoAuthFlaskClient(FlaskClient[_R]):
             self._access_token = login_user(self._user)["tokens"]["access_token"]
         yield self
         logout_user(self._user)
+        self._access_token = None
+        self._roles = []
         self._user.roles = []
         self._user.save()
         self._user = None
