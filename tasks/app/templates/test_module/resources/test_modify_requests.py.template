@@ -6,7 +6,6 @@ import pytest
 
 from smorest_sfs.modules.auth import ROLES
 from smorest_sfs.modules.{{module_name}}.models import {{ model_name }}
-from smorest_sfs.modules.{{module_name}}.schemas import {{ model_name }}Schema
 from tests._utils.helpers import param_helper
 from tests._utils.injection import GeneralModify
 
