@@ -15,7 +15,7 @@ def {{ module_name_singular }}_items(
 ) -> Iterator[Tuple[{{ model_name }}, {{ model_name }}, {{ model_name }}]]:
     # pylint: disable=W0613
     for _ in temp_db_instance_helper(
-        *({{ model_name }}(name=str(_) + "tqwq") for _ in range(3))
+        *({{ model_name }}(name=str(i) + "_name") for i in range(3))
     ):
         yield _
 

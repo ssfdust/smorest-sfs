@@ -6,6 +6,7 @@ import pytest
 
 from smorest_sfs.modules.auth import ROLES
 from smorest_sfs.modules.projects.models import Project
+from smorest_sfs.modules.projects.schemas import ProjectSchema
 from tests._utils.helpers import param_helper
 from tests._utils.injection import GeneralModify
 
@@ -27,6 +28,10 @@ class TestProjectModify(GeneralModify):
 
     def test_delete(self) -> None:
         self._delete_request()
+
+    @pytest.mark.parametrize("data", [{"name": ""}])
+    def test_validate(self, data: Dict[str, str]) -> None:
+        self._validate_request(data)
 
     def test_item_modify(self) -> None:
         data = self._item_modify_request(json={"name": "tt"})

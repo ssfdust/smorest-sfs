@@ -141,6 +141,10 @@ class GeneralModify(FixturesInjectBase):
         assert resp.status_code == 200 and item.deleted
         return resp, item
 
+    def _validate_request(self, json: Dict[str, Any]) -> None:
+        resp = self.__item_modify_request("PUT", json=json)
+        assert resp.status_code == 422
+
 
 class GeneralGet(FixturesInjectBase):
     def _get_view(self, endpoint: str, **kwargs: Any) -> Any:

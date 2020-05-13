@@ -15,7 +15,7 @@ def project_items(
 ) -> Iterator[Tuple[Project, Project, Project]]:
     # pylint: disable=W0613
     for _ in temp_db_instance_helper(
-        *(Project(name=str(_) + "tqwq") for _ in range(3))
+        *(Project(name=str(i) + "_name") for i in range(3))
     ):
         yield _
 
@@ -24,5 +24,4 @@ def project_items(
 def ProjectSchema(flask_app: Flask) -> Type[Schema]:
     # pylint: disable=W0621, W0613
     from smorest_sfs.modules.projects.schemas import ProjectSchema
-
     return ProjectSchema

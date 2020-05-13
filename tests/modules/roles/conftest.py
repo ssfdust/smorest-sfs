@@ -16,7 +16,20 @@ def test_role(
     flask_app: Flask, temp_db_instance_helper: Callable[..., Iterator[Any]]
 ) -> Iterator[Any]:
     # pylint: disable=W0613
-    for _ in temp_db_instance_helper(Role(name="test_role")):
+    for _ in temp_db_instance_helper(
+        Role(
+            name="1_test_name",
+            permissions=Permission.where(name__in=[PERMISSIONS.User]).all(),
+        ),
+        Role(
+            name="2_test_name",
+            permissions=Permission.where(name__in=[PERMISSIONS.User]).all(),
+        ),
+        Role(
+            name="3_test_name",
+            permissions=Permission.where(name__in=[PERMISSIONS.User]).all(),
+        ),
+    ):
         yield _
 
 
@@ -32,7 +45,7 @@ def test_permission(
 @pytest.fixture
 def test_role_with_permission(test_role: Role, test_permission: Permission) -> Role:
     # pylint: disable=W0621
-    new_role: Role = test_role.update(permissions=[test_permission])
+    new_role: Role = test_role[0].update(permissions=[test_permission])
     return new_role
 
 

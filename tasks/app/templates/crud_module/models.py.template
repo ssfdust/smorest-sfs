@@ -4,6 +4,7 @@
 
     {{ module_title }}的ORM模块
 """
+from smorest_sfs.extensions.marshal import not_empty
 from smorest_sfs.extensions.sqla import Model, SurrogatePK, db
 
 
@@ -11,12 +12,14 @@ class {{ model_name }}(Model, SurrogatePK):
     """
     {{ module_title }}
 
-    :attr name: str(128) {{ module_title }}名称
+    Attribute:
+        name (str): {{ module_title }}名称，禁止非空，非值，最大长度128
     """
 
     __tablename__ = "{{ module_name }}"
 
-    name = db.Column(db.String(length=128), nullable=False, doc="{{ module_title }}名称")
+    name = db.Column(db.String(length=128), nullable=False, doc="{{ module_title }}名称",
+                     info={"marshmallow": {"validate": [not_empty]}})
 
     def __repr__(self) -> str:
         return self.name

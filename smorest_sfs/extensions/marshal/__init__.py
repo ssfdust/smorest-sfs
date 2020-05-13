@@ -13,6 +13,7 @@
             id = fields.Int()
 """
 from flask_marshmallow.sqla import auto_field
+from marshmallow.validate import Length
 
 from .bases import (
     BaseIntListSchema,
@@ -25,9 +26,11 @@ from .bases import (
 from .ma import Marshmallow, SQLAlchemyAutoSchema, SQLAlchemySchema
 
 ma = Marshmallow()
+not_empty = Length(min=1)
 
 __all__ = [
     "ma",
+    "not_empty",
     "auto_field",
     "SQLAlchemySchema",
     "Marshmallow",
