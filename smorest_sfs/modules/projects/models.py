@@ -18,8 +18,12 @@ class Project(Model, SurrogatePK):
 
     __tablename__ = "projects"
 
-    name = db.Column(db.String(length=128), nullable=False, doc="项目名称",
-                     info={"marshmallow": {"validate": [not_empty]}})
+    name = db.Column(
+        db.String(length=128),
+        nullable=False,
+        doc="项目名称",
+        info={"marshmallow": {"validate": [not_empty]}},
+    )
 
     def __repr__(self) -> str:
         return self.name

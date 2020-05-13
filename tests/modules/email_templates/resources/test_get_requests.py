@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from typing import Dict
+
 import pytest
+
 from smorest_sfs.modules.auth import ROLES
 from tests._utils.injection import GeneralGet
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from typing import Any, Callable, Iterator
+
 import pytest
 
 from smorest_sfs.modules.groups.models import Group

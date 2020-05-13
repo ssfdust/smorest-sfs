@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from typing import List, Dict
+from typing import Dict, List
+
 import pytest
 
 from smorest_sfs.modules.auth import ROLES

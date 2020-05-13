@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from typing import Dict
+
 import pytest
+
 from smorest_sfs.modules.auth import ROLES
 from tests._utils.injection import GeneralGet
 
@@ -17,8 +19,7 @@ class TestListView(GeneralGet):
     def test_get_options(self) -> None:
         self._get_options()
 
-    @pytest.mark.parametrize("params, cnt", [({"name": "1"}, 1),
-                                             ({"name": "name"}, 3)])
+    @pytest.mark.parametrize("params, cnt", [({"name": "1"}, 1), ({"name": "name"}, 3)])
     def test_get_list(self, params: Dict[str, str], cnt: int) -> None:
         data = self._get_list(**params)
         if data:

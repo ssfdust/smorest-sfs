@@ -15,7 +15,10 @@ def email_template_items(
 ) -> Iterator[Tuple[EmailTemplate, EmailTemplate, EmailTemplate]]:
     # pylint: disable=W0613
     for _ in temp_db_instance_helper(
-        *(EmailTemplate(name=str(_) + "_test_name", template="template") for _ in range(3))
+        *(
+            EmailTemplate(name=str(_) + "_test_name", template="template")
+            for _ in range(3)
+        )
     ):
         yield _
 

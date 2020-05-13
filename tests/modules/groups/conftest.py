@@ -14,7 +14,9 @@ def group_items(
     flask_app: Flask, temp_db_instance_helper: Callable[..., Iterator[Any]],
 ) -> Iterator[Tuple[Group, Group, Group]]:
     # pylint: disable=W0613
-    for _ in temp_db_instance_helper(*(Group(name=str(_) + "_test_name") for _ in range(3))):
+    for _ in temp_db_instance_helper(
+        *(Group(name=str(_) + "_test_name") for _ in range(3))
+    ):
         yield _
 
 
