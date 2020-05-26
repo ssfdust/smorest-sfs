@@ -38,9 +38,9 @@ class TestEmailTemplateModify(GeneralModify):
         self._delete_request()
 
     def test_item_modify(self) -> None:
-        json = {"name": "tt", "template": "qaqa"}
+        json = {"name": "renamed", "template": "renamed"}
         data = self._item_modify_request(json)
-        assert data["name"] == "tt" and data["template"] == "qaqa"
+        assert data["name"] == "renamed" and data["template"] == "renamed"
 
     def test_item_delete(self) -> None:
         self._item_delete_request()

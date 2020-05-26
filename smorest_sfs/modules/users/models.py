@@ -9,12 +9,11 @@
 from __future__ import annotations
 
 from marshmallow.validate import OneOf, Range
-from sqlalchemy_utils.types import PasswordType
-
 from smorest_sfs.extensions.sqla import Model, SurrogatePK, db
 from smorest_sfs.modules.groups.models import Group, groups_users
 from smorest_sfs.modules.roles.models import permission_roles
 from smorest_sfs.utils.sqla import RelateTableArgs, create_relation_table
+from sqlalchemy_utils.types import PasswordType
 
 roles_users = create_relation_table(
     db, RelateTableArgs("roles_users", "role_id", "user_id")
@@ -59,6 +58,7 @@ class User(Model, SurrogatePK):
         primaryjoin="foreign(roles_users.c.user_id) == User.id",
         secondaryjoin="foreign(roles_users.c.role_id) == Role.id",
         backref=db.backref("users", lazy="dynamic", doc="所有用户"),
+        order_by="Role.id",
         info={"marshmallow": {"column": ["id", "name"]}},
     )
     permissions = db.relationship(

@@ -28,9 +28,9 @@ class TestGroupModify(GeneralModify):
 
     def test_item_modify(self) -> None:
         data = self._item_modify_request(
-            json={"name": "qq", "description": "", "default": True, "roles": [],}
+            json={"name": "renamed", "description": "renamed", "default": True, "roles": []}
         )
-        assert data["name"] == "qq"
+        assert data["name"] == "renamed" and data["description"] == "renamed" and data["default"] == True and data["roles"] == []
 
     def test_item_delete(self) -> None:
         self._item_delete_request()
