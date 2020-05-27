@@ -3,13 +3,14 @@
 
 from typing import Any, Iterator
 
-import celery
-import pytest
-from celery.contrib.testing import worker
 from flask import Flask
 from flask.testing import FlaskClient
 from loguru import logger
 
+import celery
+import pytest
+from _pytest.monkeypatch import MonkeyPatch
+from celery.contrib.testing import worker
 from smorest_sfs.extensions import Celery
 from smorest_sfs.extensions.logger_helper import create_logger
 from tests._utils.clear import clear_queue
@@ -45,7 +46,8 @@ def flask_celery_worker(flask_celery_app: celery.Celery) -> Any:
 
 
 @pytest.fixture
-def task_logger(flask_app: Flask) -> Iterator[None]:
+def task_logger(flask_app: Flask, monkeypatch: MonkeyPatch) -> Iterator[None]:
+    monkeypatch.setattr(flask_app, "_got_first_request", False)
     clear_queue("test-logger")
     log = create_logger("test-logger")
     log.init_app(flask_app)
