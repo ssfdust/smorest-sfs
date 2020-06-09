@@ -77,7 +77,8 @@ def temp_db_instance_helper(db: SQLAlchemy) -> Callable[..., Any]:
         *instances: Model,
     ) -> Iterator[Union[Model, Tuple[Model, ...]]]:
         for instance in instances:
-            instance.save()
+            db.session.add(instance)
+        db.session.commit()
 
         if len(instances) == 1:
             yield instances[0]
