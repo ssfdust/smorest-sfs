@@ -10,10 +10,32 @@
 """
 from typing import Any, Optional
 
+import sqlalchemy as sa
 from flask import Flask
 from flask_marshmallow import Marshmallow as BaseMarshmallow
 from flask_marshmallow import sqla
 from marshmallow import EXCLUDE, Schema
+from marshmallow_sqlalchemy.convert import ModelConverter as BaseModelConverter
+
+from .fields import PendulumField
+
+
+class ModelConverter(BaseModelConverter):
+
+    SQLA_TYPE_MAPPING = {
+        sa.DateTime: PendulumField,
+        **BaseModelConverter.SQLA_TYPE_MAPPING,
+    }
+
+
+def init_opts(meta: Schema.Meta) -> None:
+    if not hasattr(meta, "unknown"):
+        setattr(meta, "unknown", EXCLUDE)
+    for key in ["load_instance", "include_relationships", "include_fk"]:
+        if not hasattr(meta, key):
+            setattr(meta, key, True)
+    if not hasattr(meta, "model_converter"):
+        setattr(meta, "model_converter", ModelConverter)
 
 
 class SQLAlchemySchemaOpts(
@@ -24,6 +46,10 @@ class SQLAlchemySchemaOpts(
     继承flask_marshmallow的opts，在其基础上再次添加unknown属性，
     以及自定义的ModelConverter。
     """
+
+    def __init__(self, meta: Schema.Meta, **kwargs: Any):
+        init_opts(meta)
+        super().__init__(meta, **kwargs)
 
 
 class SQLAlchemySchema(sqla.msqla.SQLAlchemySchema, Schema):
@@ -44,11 +70,7 @@ class SQLAlchemyAutoSchemaOpts(
     """
 
     def __init__(self, meta: Schema.Meta, **kwargs: Any):
-        if not hasattr(meta, "unknown"):
-            setattr(meta, "unknown", EXCLUDE)
-        for key in ["load_instance", "include_relationships", "include_fk"]:
-            if not hasattr(meta, key):
-                setattr(meta, key, True)
+        init_opts(meta)
         super().__init__(meta, **kwargs)
 
 

@@ -30,7 +30,7 @@ before_install:
 install:
     - curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
     - PATH="${PATH}:$HOME/.poetry/bin"
-    - poetry config virtualenvs.create false && poetry install --no-interaction --no-ansi
+    - poetry config virtualenvs.create false && poetry install --no-interaction --no-ansi --no-root
 script:
     - xvfb-run pytest tests --cov smorest_sfs --cov-report xml
 after_success:
