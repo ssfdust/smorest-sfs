@@ -10,13 +10,12 @@ metadata:
     io.kompose.service: pgadmin
   name: pgadmin
 spec:
+  type: LoadBalancer
   ports:
   - name: "8084"
+    nodePort: 8084
     port: 8084
     targetPort: 8084
-  - name: "80"
-    port: 80
-    targetPort: 80
   selector:
     io.kompose.service: pgadmin
 status:
