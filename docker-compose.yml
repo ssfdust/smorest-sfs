@@ -3,6 +3,8 @@ version: '3.5'
 services:  
     db:
         image: ssfdust/psql_jieba_swsc
+        expose:
+            - "5432"
         environment:
             POSTGRES_USER: ${POSTGRES_USER:-smorest-admin}
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-smorest2019}
@@ -11,12 +13,15 @@ services:
 
     redis:
         image: redis:5.0.9-alpine
+        expose:
+            - "6379"
         command: redis-server
 
     rabbitmq:
         image: rabbitmq:3.8.3-management-alpine
         expose: 
             - "15672"
+            - "5672"
         environment:
             RABBITMQ_DEFAULT_USER: admin
             RABBITMQ_DEFAULT_PASS: admin

@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f ../docker-compose.yml --volumes hostPath --controller
+      Deployment
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: celery
+  name: celery
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: celery
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f ../docker-compose.yml --volumes hostPath --controller
+          Deployment
+        kompose.version: 1.21.0 (992df58d8)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: celery
+    spec:
+      containers:
+      - env:
+        - name: APP
+          value: celery
+        image: ssfdust/smorest-sfs
+        imagePullPolicy: ""
+        name: celery
+        resources: {}
+        volumeMounts:
+        - mountPath: /Application
+          name: celery-hostpath0
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes:
+      - hostPath:
+          path: /Development/smorest-sfs
+        name: celery-hostpath0
+status: {}

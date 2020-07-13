@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: web
+  name: web
+spec:
+  containers:
+  - env:
+    - name: VIRTUAL_HOST
+      value: smorest.local
+    - name: WEB_CONCURRENCY
+      value: "2"
+    image: ssfdust/smorest-sfs
+    name: web
+    ports:
+    - containerPort: 8000
+    resources: {}
+    volumeMounts:
+    - mountPath: /Application
+      name: web-hostpath0
+  restartPolicy: OnFailure
+  volumes:
+  - hostPath:
+      path: /Development/smorest-sfs
+    name: web-hostpath0
+status: {}
