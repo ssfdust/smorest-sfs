@@ -8,7 +8,7 @@
 import os
 from typing import List
 
-from . import errors, modules
+from . import modules
 from .extensions import init_app
 from .extensions.flask import Flask
 

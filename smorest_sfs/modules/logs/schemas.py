@@ -10,6 +10,7 @@ from marshmallow import fields
 from smorest_sfs.extensions.marshal import (
     BasePageSchema,
     BaseTimeParam,
+    IdFiledSchema,
     SQLAlchemyAutoSchema,
     SQLAlchemySchema,
     auto_field,
@@ -46,7 +47,7 @@ class RespLogParam(SQLAlchemySchema, BaseTimeParam):
         load_instance = False
 
 
-class LogSchema(SQLAlchemyAutoSchema):
+class LogSchema(SQLAlchemyAutoSchema, IdFiledSchema):
     """
     日志的序列化类
     """
@@ -55,7 +56,7 @@ class LogSchema(SQLAlchemyAutoSchema):
         model = models.Log
 
 
-class RespLogSchema(SQLAlchemyAutoSchema):
+class RespLogSchema(SQLAlchemyAutoSchema, IdFiledSchema):
     """
     响应日志的序列化类
     """

@@ -48,3 +48,18 @@ def init_app(app: Flask) -> None:
         ext.init_app(app)
     api.init_app(app, spec_kwargs=spec_kwargs)
     migrate.init_app(app, db)
+
+
+__all__ = [
+    "api",
+    "jwt_instance",
+    "create_logger",
+    "ma",
+    "db",
+    "redis_store",
+    "babel",
+    "mail",
+    "migrate",
+    "celery",
+    "logger",
+]

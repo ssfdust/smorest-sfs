@@ -17,6 +17,8 @@ class EmailTemplateSchema(SQLAlchemyAutoSchema):
     电子邮件模板的序列化类
     """
 
+    id_ = fields.Int(data_key="id", dump_only=True)
+
     class Meta:
         model = models.EmailTemplate
 
@@ -36,11 +38,13 @@ class EmailTemplateItemSchema(BaseMsgSchema):
 class EmailTemplateOptsSchema(Schema):
     """电子邮件模板的选项"""
 
+    id_ = fields.Int(data_key="id")
+
     class Meta:
-        fields = ("id", "name")
+        fields = ("id_", "name")
 
 
-class EmailTemplateListSchema(Schema):
+class EmailTemplateListSchema(BaseMsgSchema):
     """电子邮件模板的选项列表"""
 
     data = fields.List(fields.Nested(EmailTemplateOptsSchema))

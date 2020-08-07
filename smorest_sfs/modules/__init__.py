@@ -29,8 +29,13 @@ from typing import List
 from flask import Flask
 from flask_smorest.blueprint import Blueprint
 from loguru import logger
+from sqlalchemy.dialects.postgresql import dialect
 
-from smorest_sfs.extensions import api
+from smorest_sfs.extensions import api, db
+from smorest_sfs.plugins.queries.abstract import RenderableStatementABC
+from smorest_sfs.plugins.samanager import SqlaManager
+
+RenderableStatementABC.init_statement(db.session, dialect)
 
 
 def _get_preloadable_modules(module: ModuleType) -> List[str]:
@@ -38,6 +43,13 @@ def _get_preloadable_modules(module: ModuleType) -> List[str]:
         preload_modules: List[str] = getattr(module, "preload_modules")
         return preload_modules
     return ["resources", "models"]
+
+
+def _load_ma_mapping(module: ModuleType) -> None:
+    if hasattr(module, "ma_mapping"):
+        mapping = getattr(module, "ma_mapping")
+        for model, schema in mapping.items():
+            SqlaManager.register_mappings(model, schema)
 
 
 def load_module(module_name: str) -> ModuleType:
@@ -48,10 +60,12 @@ def load_module(module_name: str) -> ModuleType:
     """
     module = import_module(f".modules.{module_name}", "smorest_sfs")
     preloadable_modules = _get_preloadable_modules(module)
+    _load_ma_mapping(module)
     for submodule in preloadable_modules:
         try:
             import_module(f".modules.{module_name}.{submodule}", "smorest_sfs")
-        except ModuleNotFoundError:
+        except ModuleNotFoundError as e:
+            print(e)
             logger.error(f"无法加载{module_name}下的{submodule}")
 
     return module

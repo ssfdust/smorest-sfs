@@ -8,6 +8,7 @@ from typing import Any, Dict
 
 from flask.views import MethodView
 
+from smorest_sfs.extensions import db
 from smorest_sfs.modules.auth import ROLES
 from smorest_sfs.modules.auth.decorators import doc_login_required, role_required
 
@@ -26,7 +27,7 @@ class MenuView(MethodView):
         """
         schema = schemas.MenuOptsSchema()
         data = models.Menu.get_tree(
-            session=models.db.session,
+            session=db.session,
             json=True,
             json_fields=schema.dump,
             query=models.menu_filter,

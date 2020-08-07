@@ -5,9 +5,10 @@ from typing import List
 from loguru import logger
 
 from smorest_sfs.extensions import db
+from smorest_sfs.modules.groups.models import Group
 from smorest_sfs.modules.roles.models import Role
-from smorest_sfs.modules.users.models import Group, User
-from smorest_sfs.plugins.sa import execute
+from smorest_sfs.modules.users.models import User
+from smorest_sfs.plugins.queries import execute
 from smorest_sfs.utils.sqla import get_histroy
 
 from .sqls import (

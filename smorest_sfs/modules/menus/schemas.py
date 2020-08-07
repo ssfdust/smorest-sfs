@@ -6,32 +6,38 @@
 """
 from marshmallow import Schema, fields
 
-from smorest_sfs.extensions.marshal import BaseMsgSchema, SQLAlchemyAutoSchema
+from smorest_sfs.extensions.marshal import (
+    BaseMsgSchema,
+    IdFiledSchema,
+    SQLAlchemySchema,
+    auto_field,
+)
+from smorest_sfs.modules.users.schemas import PermissionInfoSchema
 
 from . import models
 
 
-class MenuSchema(SQLAlchemyAutoSchema):
+class MenuSchema(SQLAlchemySchema, IdFiledSchema):
     """
     菜单的序列化类
     """
 
-    children = fields.List(fields.Nested("MenuSchema"))
+    name = auto_field()
+    url = auto_field()
+    img = auto_field()
+    children = fields.List(fields.Nested("MenuSchema"), dump_only=True)
     parent_id = fields.Int()
+    permission = fields.Nested(PermissionInfoSchema, load_only=True)
 
     class Meta:
         model = models.Menu
-        exclude = ["permission_id", "level", "left", "tree_id", "parent", "right"]
-        dump_only = ["id", "children"]
-        load_only = ["permission"]
-        session = models.db.session
 
 
 class MenuOptsSchema(Schema):
     """菜单的选项"""
 
     class Meta:
-        fields = ("id", "name", "url", "img")
+        fields = ("id_", "name", "url", "img")
 
 
 class MenuListSchema(BaseMsgSchema):

@@ -8,6 +8,7 @@ from typing import Any, Dict
 
 from flask.views import MethodView
 
+from smorest_sfs.extensions import db
 from smorest_sfs.modules.auth import PERMISSIONS
 from smorest_sfs.modules.auth.decorators import doc_login_required, permission_required
 
@@ -27,7 +28,7 @@ class CodeListView(MethodView):
         """
         schema = schemas.CodeOptsSchema()
         codes = models.Code.get_tree(
-            models.db.session,
+            db.session,
             json=True,
             json_fields=schema.dump,
             query=lambda q: q.filter_by(type_code=type_code),

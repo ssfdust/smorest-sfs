@@ -1,21 +1,26 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import Any, Callable, Dict, Iterator, List, Tuple, Type
+from typing import TYPE_CHECKING, Any, Dict, Iterator, List
 
 import pytest
 from flask import Flask
-from marshmallow import Schema
+from mixer.backend.marshmallow import NestedMixer
+from mixer.backend.sqlalchemy import Mixer as SqlaMixer
 
-from smorest_sfs.modules.auth import PERMISSIONS
-from smorest_sfs.modules.roles.models import Permission, Role
+from tests.typings import INS_HELPER
+
+if TYPE_CHECKING:
+    from smorest_sfs.modules.roles.models import Permission, Role
 
 
 @pytest.fixture
 def test_role(
-    flask_app: Flask, temp_db_instance_helper: Callable[..., Iterator[Any]]
-) -> Iterator[Any]:
-    # pylint: disable=W0613
+    flask_app: Flask, temp_db_instance_helper: INS_HELPER["Role"]
+) -> Iterator[List["Role"]]:
+    from smorest_sfs.modules.auth import PERMISSIONS
+    from smorest_sfs.modules.roles.models import Permission, Role
+
     for _ in temp_db_instance_helper(
         Role(
             name="1_test_name",
@@ -35,16 +40,22 @@ def test_role(
 
 @pytest.fixture
 def test_permission(
-    flask_app: Flask, temp_db_instance_helper: Callable[..., Iterator[Any]]
-) -> Iterator[Any]:
+    flask_app: Flask, temp_db_instance_helper: INS_HELPER["Permission"]
+) -> Iterator["Permission"]:
     # pylint: disable=W0613
+    from smorest_sfs.modules.roles.models import Permission
+
     for _ in temp_db_instance_helper(Permission(name="test_permission")):
         yield _
 
 
 @pytest.fixture
-def test_role_with_permission(test_role: Role, test_permission: Permission) -> Role:
+def test_role_with_permission(
+    test_role: "Role", test_permission: "Permission"
+) -> "Role":
     # pylint: disable=W0621
+    from smorest_sfs.modules.roles.models import Role
+
     new_role: Role = test_role[0].update(permissions=[test_permission])
     return new_role
 
@@ -52,16 +63,22 @@ def test_role_with_permission(test_role: Role, test_permission: Permission) -> R
 @pytest.fixture
 def permissions(flask_app: Flask) -> List[Dict[str, Any]]:
     # pylint: disable=W0613
+    from smorest_sfs.modules.auth import PERMISSIONS
+    from smorest_sfs.modules.roles.models import Permission
+
     return [
-        {"id": p.id, "name": p.name}
+        {"id": p.id_, "name": p.name}
         for p in Permission.get_by_names(PERMISSIONS.RoleAdd, PERMISSIONS.RoleQuery)
     ]
 
 
 @pytest.fixture
 def update_permissions(flask_app: Flask) -> List[Dict[str, Any]]:
+    from smorest_sfs.modules.roles.models import Permission
+    from smorest_sfs.modules.auth import PERMISSIONS
+
     return [
-        {"id": p.id, "name": p.name}
+        {"id": p.id_, "name": p.name}
         for p in Permission.get_by_names(
             PERMISSIONS.RoleAdd, PERMISSIONS.RoleQuery, PERMISSIONS.RoleDelete
         )
@@ -69,17 +86,23 @@ def update_permissions(flask_app: Flask) -> List[Dict[str, Any]]:
 
 
 @pytest.fixture
-def role_items(
-    flask_app: Flask, temp_db_instance_helper: Callable[..., Any],
-) -> Iterator[Iterator[Tuple[Role, Role, Role]]]:
+def roles(
+    flask_app: Flask,
+    temp_db_instance_helper: INS_HELPER["Role"],
+    sqla_mixer: SqlaMixer,
+) -> Iterator[List["Role"]]:
     # pylint: disable=W0613
-    for _ in temp_db_instance_helper(Role(name="1"), Role(name="2"), Role(name="3")):
+    from smorest_sfs.modules.roles.models import Role
+
+    for _ in temp_db_instance_helper(
+        *sqla_mixer.cycle(3).blend(Role, name=sqla_mixer.sequence("{0}_test_name"))
+    ):
         yield _
 
 
 @pytest.fixture
-def RoleSchema(flask_app: Flask) -> Type[Schema]:
-    # pylint: disable=W0621, W0613
+def role_args(flask_app: Flask, nested_mixer: NestedMixer) -> Dict[str, str]:
     from smorest_sfs.modules.roles.schemas import RoleSchema
 
-    return RoleSchema
+    data: Dict[str, str] = nested_mixer.blend(RoleSchema)
+    return data

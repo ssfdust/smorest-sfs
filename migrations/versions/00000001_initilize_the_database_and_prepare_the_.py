@@ -5,16 +5,15 @@ Revises: None
 Create Date: 2020-04-23 19:48:48.084856
 
 """
+from migrations import initial_data
+from smorest_sfs.extensions import db
 
 # revision identifiers, used by Alembic.
 revision = '00000001'
 down_revision = None
 
-from migrations import initial_data
-from smorest_sfs.extensions import db
 
-
-def upgrade():
+def upgrade() -> None:
     from smorest_sfs.services.users import create_user
     from smorest_sfs.modules.users.schemas import UserRegisterSchema
     db.create_all()
@@ -33,5 +32,5 @@ def upgrade():
     initial_data.init_email_templates()
 
 
-def downgrade():
+def downgrade() -> None:
     db.drop_all()

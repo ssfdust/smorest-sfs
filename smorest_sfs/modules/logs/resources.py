@@ -23,12 +23,12 @@ class LogView(MethodView):
     @blp.arguments(schemas.LogParam, location="query", as_kwargs=True)
     @blp.response(schemas.LogPageSchema)
     @paginate()
-    def get(self, **kwargs: Any) -> BaseQuery:
+    def get(self, **kwargs: Any) -> "BaseQuery[models.Log]":
         # pylint: disable=unused-argument
         """
         获取所有日志信息——分页
         """
-        query = models.Log.where(**kwargs).order_by(models.Log.id.desc())
+        query = models.Log.where(**kwargs).order_by(models.Log.id_.desc())
 
         return query
 
@@ -40,13 +40,13 @@ class ResponseLogView(MethodView):
     @blp.arguments(schemas.RespLogParam, location="query", as_kwargs=True)
     @blp.response(schemas.RespLogPageSchema)
     @paginate()
-    def get(self, **kwargs: Any) -> BaseQuery:
+    def get(self, **kwargs: Any) -> "BaseQuery[models.Log]":
         # pylint: disable=unused-argument
         """
         获取所有日志信息——分页
         """
         query = models.ResponseLog.where(**kwargs).order_by(
-            models.ResponseLog.id.desc()
+            models.ResponseLog.id_.desc()
         )
 
         return query

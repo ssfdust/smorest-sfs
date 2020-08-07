@@ -5,24 +5,20 @@ from typing import Any
 
 import pytest
 
-from smorest_sfs.extensions.marshal.bases import (
-    BaseIntListSchema,
-    BaseMsgSchema,
-    BasePageSchema,
-)
-
 
 class TestBasesMaClass:
     def test_base_msg(self) -> None:
+        from smorest_sfs.extensions.marshal.bases import BaseMsgSchema
 
         schema = BaseMsgSchema()
         data = schema.dump({})
         assert data["msg"] == "success" and data["code"] == 0
 
     @pytest.mark.parametrize(
-        "data, result", [({"lst": []}, []), ({"lst": [1, 2, 3, 4]}, [1, 2, 3, 4]),],
+        "data, result", [({"lst": []}, []), ({"lst": [1, 2, 3, 4]}, [1, 2, 3, 4])],
     )
     def test_base_int_list(self, data: Any, result: Any) -> None:
+        from smorest_sfs.extensions.marshal.bases import BaseIntListSchema
 
         schema = BaseIntListSchema()
         rv = schema.load(data)
@@ -64,6 +60,7 @@ class TestBasesMaClass:
         ],
     )
     def test_base_page(self, data: Any, result: Any) -> None:
+        from smorest_sfs.extensions.marshal.bases import BasePageSchema
 
         schema = BasePageSchema()
         rv = schema.dump(data)

@@ -15,10 +15,10 @@ ENABLED_MODULES = [
     "groups",
     "email_templates",
     "codes",
-    "projects",
     "menus",
     "logs",
 ]
+
 
 app = create_app(ENABLED_MODULES)
 celery_app = celery.get_celery_app()

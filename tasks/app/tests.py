@@ -12,7 +12,7 @@ log = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 @task(
     default=True,
-    help={"directory": "单元测试目录", "with-pdb": "开启pdb支持 （默认：否）",},
+    help={"directory": "单元测试目录", "with-pdb": "开启pdb支持 （默认：否）"},
     incrementable=["verbose"],
 )
 def tests(context, directory="tests", cov=False, verbose=0):

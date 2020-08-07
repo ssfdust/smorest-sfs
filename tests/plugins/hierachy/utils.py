@@ -10,6 +10,7 @@ def get_parsed_reader(
     filename: str, xlsx_path_func: Callable[[str], Path]
 ) -> HierachyParser:
     xlsx_path = xlsx_path_func(filename)
-    reader = HierachyParser(filepath=xlsx_path)
+    with xlsx_path.open("rb") as f:
+        reader = HierachyParser(f)
     reader.parse()
     return reader

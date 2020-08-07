@@ -6,7 +6,7 @@ from typing import Any, Dict, Protocol
 import pytest
 
 from smorest_sfs.services.mail import PasswdMailSender
-from tests._utils.injection import UniqueQueue
+from tests._utils.uniqueue import UniqueQueue
 
 
 class MsgProtocol(Protocol):

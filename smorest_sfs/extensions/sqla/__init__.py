@@ -9,9 +9,8 @@
     核心部分从一个flask-restful项目中摘录出来，现在已经找不到了
 """
 
+from .db_instance import BaseModel as Model
 from .db_instance import db
-from .errors import CharsTooLong, DuplicateEntry
-from .model import Model
 from .surrogatepk import SurrogatePK
 
-__all__ = ["db", "CharsTooLong", "DuplicateEntry", "Model", "SurrogatePK"]
+__all__ = ["db", "Model", "SurrogatePK"]

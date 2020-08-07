@@ -8,7 +8,7 @@
 """
 from __future__ import annotations
 
-from typing import List
+from typing import List, Optional
 
 from smorest_sfs.extensions.sqla import Model, SurrogatePK, db
 from smorest_sfs.modules.auth.permissions import ROLES
@@ -35,15 +35,12 @@ class Permission(Model, SurrogatePK):
     description = db.Column(db.String(255), doc="权限描述")
 
     @classmethod
-    def get_by_name(cls, name: str) -> Permission:
+    def get_by_name(cls, name: str) -> Optional[Permission]:
         return cls.where(name=name).first()
 
     @classmethod
     def get_by_names(cls, *names: str) -> List[Permission]:
         return cls.where(name__in=names).all()
-
-    def __str__(self) -> str:
-        return self.name
 
 
 class Role(Model, SurrogatePK):
@@ -65,12 +62,12 @@ class Role(Model, SurrogatePK):
     group_default = db.Column(db.Boolean, doc="组默认角色", default=False)
     permissions = db.relationship(
         "Permission",
+        uselist=True,
         secondary=permission_roles,
         doc="所有权限",
-        primaryjoin="foreign(permission_roles.c.role_id) == Role.id",
-        secondaryjoin="foreign(permission_roles.c.permission_id) == Permission.id",
-        backref=db.backref("roles", lazy="dynamic", doc="所有角色"),
-        info={"marshmallow": {"column": ["id", "name"]}},
+        primaryjoin="foreign(permission_roles.c.role_id) == Role.id_",
+        secondaryjoin="foreign(permission_roles.c.permission_id) == Permission.id_",
+        # backref=db.backref("roles", lazy="dynamic", doc="所有角色"),
     )
 
     @classmethod
@@ -80,10 +77,10 @@ class Role(Model, SurrogatePK):
     @classmethod
     def get_by_user_default(cls, is_admin: bool = False) -> List[Role]:
         if is_admin:
-            return cls.where(name=ROLES.SuperUser).all()
+            return cls.where(name__in=[ROLES.SuperUser, ROLES.User]).all()
         return cls.where(user_default=True).all()
 
-    def add_permissions(self, permissions: List[Permission]) -> List[Permission]:
+    def add_permissions(self, permissions: List[Permission]) -> List[str]:
         """
         获取权限
 
@@ -91,8 +88,6 @@ class Role(Model, SurrogatePK):
         """
         for permission in permissions:
             if permission not in self.permissions:
+                assert isinstance(self.permissions, list)
                 self.permissions.append(permission)
         return list(permission.name for permission in self.permissions)
-
-    def __repr__(self) -> str:
-        return self.name

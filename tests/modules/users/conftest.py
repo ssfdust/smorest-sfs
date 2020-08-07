@@ -1,26 +1,19 @@
-from typing import Any, Callable, Iterator, Tuple, Type
+from typing import TYPE_CHECKING, Iterator, List
 
 import pytest
-from flask import Flask
-from marshmallow import Schema
 
-from smorest_sfs.modules.groups.models import Group
-from smorest_sfs.modules.roles.models import Role
-from smorest_sfs.modules.users.models import User, UserInfo
+from tests.typings import INS_HELPER
 
-
-@pytest.fixture
-def UserSchema(flask_app: Flask) -> Type[Schema]:
-    # pylint: disable=W0621, W0613
-    from smorest_sfs.modules.users.schemas import UserSchema
-
-    return UserSchema
+if TYPE_CHECKING:
+    from smorest_sfs.modules.users.models import User
 
 
 @pytest.fixture
-def user_items(
-    temp_db_instance_helper: Callable[..., Iterator[Any]],
-) -> Iterator[Tuple[User, User, User]]:
+def users(temp_db_instance_helper: INS_HELPER["User"],) -> Iterator[List["User"]]:
+    from smorest_sfs.modules.users.models import User, UserInfo
+    from smorest_sfs.modules.groups.models import Group
+    from smorest_sfs.modules.roles.models import Role
+
     for _ in temp_db_instance_helper(
         User(
             username="test_user_1",

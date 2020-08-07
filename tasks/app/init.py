@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
 @task(
-    help={"su_passwd": "root密码", "config_types": "配置类型（默认：development、testing）",}
+    help={"su_passwd": "root密码", "config_types": "配置类型（默认：development、testing）"}
 )
 def create_pg_db_and_user(context, su_passwd=None, config_types=[]):
     """
@@ -37,7 +37,7 @@ def create_pg_db_and_user(context, su_passwd=None, config_types=[]):
 
 
 @task(
-    help={"admin": "管理员账户（默认: admin）", "config_types": "配置类型（默认：development、testing）",}
+    help={"admin": "管理员账户（默认: admin）", "config_types": "配置类型（默认：development、testing）"}
 )
 def create_mg_db_and_user(context, admin="admin", passwd=None, config_types=[]):
     """

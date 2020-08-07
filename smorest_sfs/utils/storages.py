@@ -4,9 +4,10 @@
 import mimetypes
 import os
 from pathlib import Path
-from typing import TypeVar, Union
+from typing import Union
 
 from flask import send_file
+from flask.wrappers import Response
 from werkzeug.datastructures import FileStorage
 
 from .paths import (
@@ -16,8 +17,6 @@ from .paths import (
     get_relative_pathstr,
     make_uploaded_path,
 )
-
-Response = TypeVar("Response")
 
 
 def load_storage_from_path(filename: str, path: Union[Path, str]) -> FileStorage:

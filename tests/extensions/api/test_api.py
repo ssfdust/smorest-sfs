@@ -30,9 +30,11 @@ class TestApi(FixturesInjectBase):
         class Pets(MethodView):  # pylint: disable=W0612
             @blp.response(TestPageSchema)
             @paginate()
-            def get(self) -> BaseQuery:
+            def get(self) -> "BaseQuery[Model]":
                 """List pets"""
-                query: BaseQuery = TestPagination.query.order_by(TestPagination.id)
+                query: "BaseQuery[Model]" = TestPagination.query.order_by(
+                    TestPagination.id_
+                )
                 return query
 
         blp.add_url_rule("", "pets", Pets.as_view("pets"))

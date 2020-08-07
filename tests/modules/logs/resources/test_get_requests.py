@@ -1,20 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from typing import Dict, List
+from typing import TYPE_CHECKING, Dict, List
 
 import pytest
 
-from smorest_sfs.modules.auth import ROLES
-from smorest_sfs.modules.logs.models import Log
-from tests._utils.injection import GeneralGet
+from tests._utils.launcher import AccessLauncher
+
+if TYPE_CHECKING:
+    from smorest_sfs.modules.logs.models import Log
 
 
-class TestLogListView(GeneralGet):
+class TestLogListView(AccessLauncher):
 
-    fixture_names = ("flask_app_client", "flask_app", "regular_user", "log_items")
+    fixture_names = ("flask_app_client", "flask_app", "regular_user", "logs")
     view = "Log.LogView"
-    login_roles = [ROLES.LogManager]
-    log_items: List[Log]
+    login_roles = ["LogManager"]
+    log_items: List["Log"]
 
     @pytest.mark.parametrize(
         "params, count",
@@ -37,12 +38,12 @@ class TestLogListView(GeneralGet):
             assert data[0].keys() > {"id", "level", "line", "module", "message"}
 
 
-class TestRespLogListView(GeneralGet):
+class TestRespLogListView(AccessLauncher):
 
-    fixture_names = ("flask_app_client", "flask_app", "regular_user", "resp_log_items")
+    fixture_names = ("flask_app_client", "flask_app", "regular_user", "resp_logs")
     view = "Log.ResponseLogView"
-    login_roles = [ROLES.LogManager]
-    log_items: List[Log]
+    login_roles = ["LogManager"]
+    logs: List["Log"]
 
     @pytest.mark.parametrize(
         "params, count",

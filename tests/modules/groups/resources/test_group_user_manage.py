@@ -2,16 +2,17 @@
 # -*- coding: utf-8 -*-
 
 from functools import reduce
-from typing import Any, Dict, List, Set
+from typing import TYPE_CHECKING, Any, Dict, List, Set
 
 import pytest
 from deepdiff import DeepDiff
 
-from smorest_sfs.modules.auth import ROLES
-from smorest_sfs.modules.groups.models import Group
-from smorest_sfs.modules.roles.models import Role
-from smorest_sfs.modules.users.models import User
-from tests._utils.injection import GeneralModify
+from tests._utils.launcher import ModifyLauncher
+
+if TYPE_CHECKING:
+    from smorest_sfs.modules.groups.models import Group
+    from smorest_sfs.modules.roles.models import Role
+    from smorest_sfs.modules.users.models import User
 
 
 def get_roles(res: Dict[str, Any]) -> Set[str]:
@@ -22,14 +23,14 @@ def get_roles(res: Dict[str, Any]) -> Set[str]:
     return reduce(lambda x, y: x & y, roles_iter)
 
 
-class TestGroupRoleManager(GeneralModify):
+class TestGroupRoleManager(ModifyLauncher):
     """
     group_1: fake_2
     """
 
-    fake_roles: List[Role]
-    fake_groups: List[Group]
-    fake_users: List[User]
+    fake_roles: List["Role"]
+    fake_groups: List["Group"]
+    fake_users: List["User"]
 
     fixture_names = (
         "flask_app_client",
@@ -39,26 +40,25 @@ class TestGroupRoleManager(GeneralModify):
         "fake_groups",
         "fake_users",
     )
-    schema = "GroupSchema"
     item_view = "Group.GroupUserView"
-    login_roles = [ROLES.GroupManager]
-    delete_param_key = "group_id"
+    login_roles = ["GroupManager"]
+    edit_param_key = "group_id"
     data = {"users": [{"id": 1, "username": "fake_"}]}
 
     def _modify_group(self, indexlst: List[int]) -> DeepDiff:
         from smorest_sfs.modules.users.schemas import UserSchema
 
-        user_schema = UserSchema(many=True, only=["roles", "id", "username"])
+        user_schema = UserSchema(many=True, only=["roles", "id_", "username"])
         pre_user_info = user_schema.dump(self.fake_users)
         users = [
             {
-                "id": self.fake_users[index].id,
+                "id": self.fake_users[index].id_,
                 "username": self.fake_users[index].username,
             }
             for index in indexlst
         ]
         data = self.data.copy()
-        data["users"] = users  # type: ignore
+        data["users"] = users
         self._item_modify_request(data)
         current_user_info = user_schema.dump(self.fake_users)
         diff = DeepDiff(pre_user_info, current_user_info)
@@ -109,5 +109,5 @@ class TestGroupRoleManager(GeneralModify):
     ) -> None:
         assert diff == self._modify_group(user_idxlst)
 
-    def _get_modified_item(self) -> Group:
+    def _get_modified_item(self) -> "Group":
         return self.fake_groups[0]

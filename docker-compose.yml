@@ -18,15 +18,14 @@ services:
         command: redis-server
 
     rabbitmq:
-        image: rabbitmq:3.8.3-management-alpine
+        image:  bitnami/rabbitmq:latest
         expose: 
-            - "15672"
             - "5672"
         environment:
-            RABBITMQ_DEFAULT_USER: admin
-            RABBITMQ_DEFAULT_PASS: admin
-            RABBITMQ_DEFAULT_VHOST: smorest
-            VIRTUAL_HOST: rabbitmq.local
+            RABBITMQ_USERNAME: admin
+            RABBITMQ_PASSWORD: admin
+            RABBITMQ_VHOST: smorest
+            RABBITMQ_ULIMIT_NOFILES: 128
 
     nginx:
         image: nginx:stable-alpine

@@ -6,7 +6,8 @@ from typing import Dict, Tuple, Union
 import pytest
 from flask import Flask
 from marshmallow import Schema, ValidationError
-from pendulum import DateTime, tz
+from pendulum import tz
+from pendulum.datetime import DateTime
 
 utc = tz.timezone("utc")
 

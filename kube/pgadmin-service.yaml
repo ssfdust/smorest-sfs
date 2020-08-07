@@ -13,8 +13,8 @@ spec:
   type: LoadBalancer
   ports:
   - name: "8084"
-    nodePort: 8084
     port: 8084
+    nodePort: 8084
     targetPort: 8084
   selector:
     io.kompose.service: pgadmin

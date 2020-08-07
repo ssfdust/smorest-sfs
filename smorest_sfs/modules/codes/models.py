@@ -16,6 +16,8 @@ class Code(Model, SurrogatePK, BaseNestedSets):
     :attr name: str(128) 编码名称
     """
 
+    sqlalchemy_mptt_pk_name = "id_"
+
     __tablename__ = "codes"
 
     name = db.Column(db.String(length=128), nullable=False, doc="编码名称")

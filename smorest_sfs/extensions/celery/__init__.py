@@ -72,7 +72,7 @@ class Celery:
             raise ValueError(
                 "Tasks must have a name specified. Recommend: zeus.[task-name]"
             )
-        return self.celery.task(name=name, *args, **kwargs)
+        return self.celery.task(name=name, *args, **kwargs)  # type: ignore
 
     @property
     def tasks(self) -> Any:

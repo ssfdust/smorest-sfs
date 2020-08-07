@@ -4,29 +4,31 @@
 
     用户组模块的Schemas
 """
-from marshmallow import Schema, fields
+from marshmallow import fields
 
 from smorest_sfs.extensions.marshal import (
     BaseMsgSchema,
     BasePageSchema,
+    IdFiledSchema,
+    IdNameSchema,
     SQLAlchemySchema,
     auto_field,
 )
+from smorest_sfs.modules.users.schemas import RoleInfoSchema, UserLoadSchema
 
 from . import models
 
 
-class GroupSchema(SQLAlchemySchema):
+class GroupSchema(SQLAlchemySchema, IdFiledSchema):
     """
     用户组的序列化类
     """
 
-    id = auto_field(dump_only=True)
     name = auto_field()
     default = auto_field()
     description = auto_field()
-    roles = auto_field()
-    users = auto_field(dump_only=True)
+    roles = fields.List(fields.Nested(RoleInfoSchema))
+    users = fields.List(fields.Nested(IdNameSchema), dump_only=True)
 
     class Meta:
         model = models.Group
@@ -38,7 +40,7 @@ class GroupUserSchema(SQLAlchemySchema):
     用户组的序列化类
     """
 
-    users = auto_field(load_only=True)
+    users = fields.List(fields.Nested(UserLoadSchema), load_only=True)
 
     class Meta:
         model = models.Group
@@ -57,14 +59,7 @@ class GroupItemSchema(BaseMsgSchema):
     data = fields.Nested(GroupSchema)
 
 
-class GroupOptsSchema(Schema):
-    """用户组的选项"""
-
-    class Meta:
-        fields = ("id", "name")
-
-
-class GroupListSchema(Schema):
+class GroupListSchema(BaseMsgSchema):
     """用户组的选项列表"""
 
-    data = fields.List(fields.Nested(GroupOptsSchema))
+    data = fields.List(fields.Nested(IdNameSchema))

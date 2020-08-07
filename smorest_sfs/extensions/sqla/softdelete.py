@@ -5,14 +5,22 @@
 """
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import TYPE_CHECKING, Any, Optional, TypeVar
 
-from flask_sqlalchemy import BaseQuery
+from flask_sqlalchemy import BaseQuery as _BaseQuery
+from sqlalchemy.orm import class_mapper
 
-from .db_instance import db
+from smorest_sfs.utils.typing import create_fake_generic
+
+M = TypeVar("M")
+
+if TYPE_CHECKING:
+    BaseQuery = _BaseQuery
+else:
+    BaseQuery = create_fake_generic(_BaseQuery)
 
 
-class QueryWithSoftDelete(BaseQuery):
+class QueryWithSoftDelete(BaseQuery[M]):
     """
     软删除模块
 
@@ -21,29 +29,29 @@ class QueryWithSoftDelete(BaseQuery):
 
     _with_deleted = False
 
-    def __new__(cls, *args: Any, **kwargs: Any) -> Any:
-        obj = super(QueryWithSoftDelete, cls).__new__(cls)
+    def __new__(cls, *args: Any, **kwargs: Any) -> "QueryWithSoftDelete[M]":
+        obj: "QueryWithSoftDelete[M]" = super(QueryWithSoftDelete, cls).__new__(cls)
         obj._with_deleted = kwargs.pop("_with_deleted", False)
         if len(args) > 0:
             super(QueryWithSoftDelete, obj).__init__(*args, **kwargs)
             return obj.filter_by(deleted=False) if not obj._with_deleted else obj
         return obj
 
-    def __init__(self, *args: Any, **kwargs: Any):  # pylint: disable=W0231
+    def __init__(self, *args: Any, **kwargs: Any):
         pass
 
-    def with_deleted(self) -> QueryWithSoftDelete:
-        # pylint: disable=C0116
+    def with_deleted(self) -> "QueryWithSoftDelete[M]":
         return self.__class__(
-            db.class_mapper(self._mapper_zero().class_),
-            session=db.session(),  # type: ignore
+            class_mapper(self._mapper_zero().class_),  # type: ignore
+            session=self.session,
             _with_deleted=True,
         )
 
-    def _get(self, ident: Any) -> Optional[Any]:
+    def _get(self, ident: Any) -> Optional[M]:
         """提供原本的get方法"""
         return super(QueryWithSoftDelete, self).get(ident)
 
-    def get(self, ident: Any) -> Optional[Any]:
-        obj = self.with_deleted()._get(ident)  # pylint: disable=W0212
-        return obj if obj is None or self._with_deleted or not obj.deleted else None
+    def get(self, ident: Any) -> Optional[M]:
+        obj = self.with_deleted()._get(ident)
+        deleted = getattr(obj, "deleted", False)
+        return obj if obj is None or self._with_deleted or not deleted else None

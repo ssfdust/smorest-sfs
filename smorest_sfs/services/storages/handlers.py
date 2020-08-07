@@ -23,19 +23,18 @@ class StorageFactory:
     def save(self, commit: bool = True) -> Storages:
         """文件保存"""
         self.storage.save_store()
-        return self.storage.save(commit)
+        return self.storage.save()  # type: ignore
 
-    def update(
-        self, store: FileStorage, commit: bool = True, **kwargs: Any
-    ) -> Storages:
+    def update(self, store: FileStorage, **kwargs: Any) -> Storages:
         """文件更新"""
         self.storage.store = store
         self.storage.save_store()
-        return self.storage.update(commit=commit, **kwargs)
+        return self.storage.update(**kwargs)  # type: ignore
 
     def hard_delete(self, commit: bool = True) -> None:
         """文件永久删除"""
-        delete_from_rel_path(self.storage.path)
-        self.storage.deleted = True
-        self.storage.saved = False
-        self.storage.hard_delete(commit)
+        if self.storage.path:
+            delete_from_rel_path(self.storage.path)
+            self.storage.deleted = True
+            self.storage.saved = False
+            Storages.query.filter_by(id_=self.storage.id_).delete()

@@ -21,6 +21,8 @@ from .bases import (
     BasePageSchema,
     BaseTimeParam,
     GeneralParam,
+    IdFiledSchema,
+    IdNameSchema,
     UploadField,
 )
 from .ma import Marshmallow, SQLAlchemyAutoSchema, SQLAlchemySchema
@@ -39,6 +41,8 @@ __all__ = [
     "BaseMsgSchema",
     "BasePageSchema",
     "BaseIntListSchema",
+    "IdNameSchema",
     "UploadField",
     "GeneralParam",
+    "IdFiledSchema",
 ]

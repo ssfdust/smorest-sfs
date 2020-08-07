@@ -23,6 +23,7 @@ from smorest_sfs.modules.auth.decorators import (
     permission_required,
     role_required,
 )
+from smorest_sfs.plugins.samanager import SqlaManager
 from smorest_sfs.services.groups import (
     parse_user_groups_change,
     set_default_groups_for_user,
@@ -30,6 +31,8 @@ from smorest_sfs.services.groups import (
 from smorest_sfs.services.users import create_user
 
 from . import blp, models, schemas
+
+samanager: SqlaManager[models.User] = SqlaManager(db.session)
 
 
 @blp.route("/options")
@@ -56,12 +59,12 @@ class UserView(MethodView):
     @blp.arguments(schemas.UserParam, location="query", as_kwargs=True)
     @blp.response(schemas.UserPageSchema)
     @paginate()
-    def get(self, username: str) -> BaseQuery:
+    def get(self, username: str) -> "BaseQuery[models.User]":
         # pylint: disable=unused-argument
         """
         获取所有用户信息——分页
         """
-        query = models.User.query.join(models.User.userinfo)
+        query: "BaseQuery[models.User]" = models.User.query.join(models.User.userinfo)
         if username:
             query = query.filter(
                 db.or_(
@@ -87,12 +90,13 @@ class UserView(MethodView):
         -------------------------------
         :param lst: list 包含id列表的字典
         """
-        users = models.User.where(id__in=lst).all()
+        users = models.User.query.filter(models.User.id_.in_(lst)).all()
         for user in users:
             user.groups = []
             user.roles = []
             parse_user_groups_change(user)
-        models.User.delete_by_ids(lst)
+        models.User.destroy(*lst)
+        db.session.commit()
         logger.info(f"{current_user.username}删除了用户{lst}")
 
 
@@ -109,10 +113,12 @@ class UserItemView(MethodView):
         """
         更新用户
         """
-        user = models.User.update_by_id(user_id, schemas.UserSchema, user, commit=False)
+        samanager.pk_with(models.User, user_id)
+        user = samanager.update_with(user, commit=False)
+
         parse_user_groups_change(user)
-        models.db.session.commit()
-        logger.info(f"{current_user.username}更新了用户{user.id}")
+        logger.info(f"{current_user.username}更新了用户{user.id_}")
+        db.session.commit()
 
         return {"data": user}
 
@@ -123,11 +129,12 @@ class UserItemView(MethodView):
         """
         删除用户
         """
-        user = models.User.get_by_id(user_id)
+        user = models.User.find_or_fail(user_id)
         user.groups = []
         parse_user_groups_change(user)
         user.roles = []
         user.delete()
+        db.session.commit()
         logger.info(f"{current_user.username}删除了用户{user_id}")
 
     @doc_login_required
@@ -137,7 +144,7 @@ class UserItemView(MethodView):
         """
         获取单条用户
         """
-        user = models.User.get_by_id(user_id)
+        user = models.User.find_or_fail(user_id)
 
         return {"data": user}
 
@@ -151,7 +158,9 @@ class UserRegisterView(MethodView):
         注册用户
         """
         user = create_user(user)
+        user.save()
         set_default_groups_for_user(user)
+        db.session.commit()
         return {"data": user}
 
 
@@ -175,7 +184,9 @@ class UserSelfView(MethodView):
         """
         更新用户信息
         """
-        models.User.update_by_id(current_user.id, schemas.UserSelfSchema, user)
+        samanager.pk_with(models.User, current_user.id_)
+        samanager.update_with(user, schema=schemas.UserSelfSchema)
         logger.info(f"{current_user.username}更新了个人信息")
+        db.session.commit()
 
         return {"data": current_user}

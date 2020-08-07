@@ -1,0 +1,19 @@
+SELECT users.name,
+       users.nickname
+FROM users
+---
+SELECT users.name,
+       users.nickname,
+       items.name AS "Itemname"
+FROM users
+JOIN items ON items.uid = users.id
+---
+DELETE
+FROM users
+---
+INSERT INTO users (id, name, nickname)
+VALUES (100, 'test1', 'test2')
+---
+UPDATE users
+SET name='updated'
+WHERE users.id = 1

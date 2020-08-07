@@ -28,6 +28,7 @@ workers = web_concurrency
 bind = use_bind
 keepalive = 120
 errorlog = "-"
+accesslog = "-"
 
 # For debugging and testing
 log_data = {

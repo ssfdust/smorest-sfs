@@ -38,21 +38,28 @@ celery = "^4.4.2"
 sqlalchemy-mixins = "^1.2.1"
 psycopg2-binary = "^2.8.5"
 celery-redbeat = "^0.13.0"
+black = "^19.10b0"
+flake8 = "^3.8.3"
+pyexcel = "^0.6.3"
+pyexcel-xlsx = "^0.5.8"
 
 [tool.poetry.dev-dependencies]
 pytest = "5.4.3"
 pdbpp = "^0.10.2"
 freezegun = "^0.3.13"
 pytest-cov = "^2.8.1"
-ipython = "^7.13.0"
-pylint = "^2.4.4"
-mypy = "^0.770"
+ipython = "^7.17.0"
+mypy = "^0.782"
 invoke = "^1.4.0"
-sqlalchemy-stubs = "^0.3"
+sqlalchemy-stubs = { git = "https://github.com/ssfdust/sqlalchemy-stubs.git" }
 sqlalchemy-mptt-stubs = "^0.0.3"
 supervisor = "^4.1.0"
 deepdiff = "^4.3.2"
 pytest-sugar = "^0.9.3"
+doq = "^0.6.1"
+mixer = { git = "https://github.com/ssfdust/mixer.git", branch = "develop" }
+flask-sqlalchemy-stubs = { git = "https://github.com/ssfdust/flask-sqlalchemy-stubs.git" }
+jedi = "0.17.2"
 
 [tool.coverage.run]
 include = ["smorest_sfs"]

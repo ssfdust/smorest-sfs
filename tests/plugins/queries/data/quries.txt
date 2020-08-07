@@ -1,0 +1,13 @@
+SELECT users.id,
+       users.name,
+       users.nickname
+FROM users
+---
+SELECT users.id,
+       users.name,
+       users.nickname,
+       items.id,
+       items.name,
+       items.uid
+FROM users
+JOIN items ON users.id = items.uid

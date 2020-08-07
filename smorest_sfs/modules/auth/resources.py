@@ -4,16 +4,19 @@
     用户验证的API资源模块
 """
 from datetime import datetime
-from typing import Any, Dict, Optional, TypeVar, Union
+from typing import Any, Dict, Optional, Union
+from uuid import uuid4
 
 from captcha.image import ImageCaptcha
 from flask import current_app as app
-from flask import send_file, url_for
+from flask import make_response, send_file, url_for
 from flask.views import MethodView
+from flask.wrappers import Response
 from flask_jwt_extended import create_access_token, current_user, get_jwt_identity
 from flask_smorest import abort
 from loguru import logger
 
+from smorest_sfs.extensions import db
 from smorest_sfs.extensions.marshal import BaseMsgSchema
 from smorest_sfs.extensions.storage.captcha import CaptchaStore
 from smorest_sfs.modules.users.models import User
@@ -28,15 +31,14 @@ from . import blp, params, schemas
 from .decorators import doc_login_required, doc_refresh_required
 from .helpers import add_token_to_database
 
-Response = TypeVar("Response")
-
 
 @blp.route("/login")
 class LoginView(MethodView):
-    @blp.arguments(params.LoginParams, location="json")
+    @blp.arguments(params.LoginParams, location="json", as_kwargs=True)
+    @blp.arguments(params.CookieParam, location="cookies", as_kwargs=True)
     @blp.response(schemas.UserViewPostSchema, description="登录成功")
     def post(
-        self, args: Dict[str, str]
+        self, **args: str
     ) -> Dict[str, Union[int, str, Dict[str, Dict[str, str]]]]:
         """
         用户登录
@@ -45,29 +47,32 @@ class LoginView(MethodView):
         登录方式为token方式
         """
         with UserLoginChecker(
-            args["email"], args["password"], args["captcha"], args["token"]
+            args["email"], args["password"], args["captcha"], args["captcha_token"]
         ).check() as user:
             data = login_user(user)
+            db.session.commit()
 
         return {"code": 0, "msg": "success", "data": data}
 
 
 @blp.route("/captcha")
 class CaptchaView(MethodView):
-    @blp.arguments(params.CaptchaParam, location="query", as_kwargs=True)
     @blp.response(description="图片")
-    def get(self, token: str) -> Response:
+    def get(self) -> Response:
         """
         获取验证码图片
 
         每次随机生成一个token来获取图片，延时时间为5分钟
         """
+        token = uuid4().hex
         image = ImageCaptcha()
         store = CaptchaStore(token)
         code = store.generate_captcha()
         data = image.generate(code)
 
-        return send_file(data, attachment_filename="captcha.jpeg")
+        resp = make_response(send_file(data, attachment_filename="captcha.jpeg"))
+        resp.set_cookie("captcha_token", token)
+        return resp
 
 
 @blp.route("/forget-password")
@@ -94,6 +99,7 @@ class ForgetPasswordView(MethodView):
             sender.send()
         else:
             abort(404, message="未填写电子邮箱")
+        db.session.commit()
         return {"code": 0, "msg": "success"}
 
 
@@ -109,6 +115,7 @@ class UserConfirmView(MethodView):
 
         user.update(confirmed_at=datetime.utcnow(), active=True)
         logger.info(f"{user.email}完成了用户验证")
+        db.session.commit()
 
         return {"code": 0, "msg": "success"}
 
@@ -124,13 +131,13 @@ class ResetForgotPasswordView(MethodView):
 
         根据token设置密码
         """
-
         if password != confirm_password:
             abort(501, message="密码不一致，修改失败")
 
         user = confirm_current_token("passwd")
         logger.info(f"{user.email} 修改了密码")
         user.update(password=confirm_password)
+        db.session.commit()
 
         return {"code": 0, "msg": "success"}
 
@@ -143,6 +150,7 @@ class ResetForgotPasswordView(MethodView):
         测试token是否可用
         """
         confirm_current_token("passwd", revoked=False)
+        db.session.commit()
 
         return {"code": 0, "msg": "success"}
 
@@ -161,6 +169,7 @@ class RefreshJwtTokenView(MethodView):
         access_token = create_access_token(identity=user_identity)
         add_token_to_database(access_token, app.config["JWT_IDENTITY_CLAIM"])
         logger.info(f"{current_user} 刷新了token")
+        db.session.commit()
 
         return {"code": 0, "msg": "success", "data": {"access_token": access_token}}
 
@@ -176,5 +185,6 @@ class LogoutView(MethodView):
         带着token并以refresh_token为参数访问此api，即可完成登出，token失效
         """
         logout_user(current_user)
+        db.session.commit()
 
         return {"code": 0, "msg": "success"}

@@ -5,7 +5,6 @@ from datetime import datetime
 from getpass import getpass
 from typing import Any, List, Optional, Type
 
-from smorest_sfs.extensions import db
 from smorest_sfs.modules.auth.permissions import (
     DEFAULT_ROLES_PERMISSIONS_MAPPING as mapping,
 )
@@ -23,7 +22,6 @@ def create_item_from_cls(model_cls: Type[Model], cls: object) -> None:
     names = [getattr(cls, attr) for attr in dir(cls) if not attr.startswith("__")]
     for name in names:
         model_cls(name=name).save()
-    db.session.commit()
 
 
 def _handle_default_role(role: Role) -> None:
@@ -39,10 +37,10 @@ def init_permission() -> None:
     for role, permissions in mapping.items():
         permission_instances = Permission.where(name__in=permissions).all()
         role_instance = Role.where(name=role).first()
-        _handle_default_role(role_instance)
-        role_instance.permissions = permission_instances
-        db.session.add(role_instance)
-    db.session.commit()
+        if role_instance:
+            _handle_default_role(role_instance)
+            role_instance.permissions = permission_instances
+            role_instance.save()
 
 
 def init_development_users(password: Optional[str] = None) -> None:
@@ -84,7 +82,7 @@ def get_or_create(model_cls: Type[Model], name: str) -> Any:
     item = model_cls.where(name=name).first()
     if item:
         return item
-    return model_cls(name=name).save(False)
+    return model_cls(name=name).save()
 
 
 def get_or_create_from_lst(model_cls: Type[Model], *names: str) -> List[Any]:
@@ -108,8 +106,6 @@ def update_permissions() -> None:
         permissions = get_or_create_from_lst(Permission, *permissions)
         role.add_permissions(permissions)
 
-    db.session.commit()
-
 
 def init_email_templates() -> None:
     """初始化邮件模板"""
@@ -122,4 +118,6 @@ def init_email_templates() -> None:
 def init_groups() -> None:
     """初始化用户组"""
     role = Role.get_by_name(ROLES.User)
-    Group.create(name="默认用户组", description="默认用户组", default=True, roles=[role])
+    local_session = role.session.object_session(role)
+    group = Group(name="默认用户组", description="默认用户组", default=True, roles=[role])
+    local_session.add(group)

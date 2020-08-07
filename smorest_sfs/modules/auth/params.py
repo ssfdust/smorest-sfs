@@ -29,13 +29,21 @@ class LoginParams(Schema):
     :attr email: str 用户邮箱
     :attr password: str 密码
     :attr captcha: str 验证码
-    :attr token: str 验证码token
     """
 
     email = fields.Str(required=True, allow_none=False, description="用户邮箱")
     password = fields.Str(required=True, allow_none=False, description="密码")
     captcha = fields.Str(required=True, allow_none=False, description="验证码")
-    token = fields.Str(required=True, allow_none=False, description="验证token")
+
+
+class CookieParam(Schema):
+    """
+    Cookie参数
+
+    :attr token: str 验证码token
+    """
+
+    captcha_token = fields.Str(required=True, allow_none=False, description="验证token")
 
 
 class JwtParam(Schema):

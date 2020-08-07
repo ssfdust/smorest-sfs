@@ -2,19 +2,18 @@
 # -*- coding: utf-8 -*-
 
 
+from typing import Type
+
 import pytest
 from flask import Flask
 from flask_babel import Babel
-from flask_sqlalchemy import DefaultMeta, SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy.model import Model
 from marshmallow import Schema
-
-from smorest_sfs.extensions.marshal.fields import PendulumField
 
 
 @pytest.fixture(scope="package")
 def marshal_db() -> SQLAlchemy:
-    from smorest_sfs.extensions.sqla.db_instance import SQLAlchemy
-
     db = SQLAlchemy()
 
     return db
@@ -32,10 +31,11 @@ def ma_app(marshal_db: SQLAlchemy) -> Flask:
 
 
 @pytest.fixture(scope="package")
-def DateTimeTestTable(marshal_db: SQLAlchemy) -> DefaultMeta:
+def DateTimeTestTable(marshal_db: SQLAlchemy) -> Type[Model]:
     from smorest_sfs.extensions.sqla import Model
 
     class DateTimeTable(Model):
+        __tablename__ = "datetime_table"
         id = marshal_db.Column(marshal_db.Integer, primary_key=True)
         time = marshal_db.Column(marshal_db.DateTime)
 
@@ -44,6 +44,8 @@ def DateTimeTestTable(marshal_db: SQLAlchemy) -> DefaultMeta:
 
 @pytest.fixture(scope="package")
 def pendulum_field_schema() -> Schema:
+    from smorest_sfs.extensions.marshal.fields import PendulumField
+
     class TestPendulumSchema(Schema):
         time = PendulumField(format="%Y-%m-%d %H:%M:%S", allow_none=True)
 

@@ -3,29 +3,32 @@
 
 
 from functools import reduce
-from typing import Any, Dict, List, Set
+from typing import TYPE_CHECKING, Any, Dict, List, Set
 
 import pytest
 
-from smorest_sfs.modules.auth import ROLES
-from smorest_sfs.modules.groups.models import Group
-from smorest_sfs.modules.roles.models import Role
-from smorest_sfs.modules.users.models import User
-from tests._utils.injection import GeneralModify
+from tests._utils.launcher import ModifyLauncher
+
+if TYPE_CHECKING:
+    from smorest_sfs.modules.groups.models import Group
+    from smorest_sfs.modules.roles.models import Role
+    from smorest_sfs.modules.users.models import User
 
 
 def get_roles(res: Dict[str, Any]) -> Set[str]:
+    from smorest_sfs.modules.users.models import User
+
     uids = [i["id"] for i in res["users"]]
-    roles_iter = iter(
-        set(r.name for r in user.roles) for user in User.where(id__in=uids).all()
+    roles_iter = iter(  # type: ignore
+        set(r.name for r in user.roles) for user in User.id_in(uids).all()
     )
     return reduce(lambda x, y: x & y, roles_iter)
 
 
-class TestGroupRoleManager(GeneralModify):
-    fake_roles: List[Role]
-    fake_groups: List[Group]
-    fake_users: List[User]
+class TestGroupRoleManager(ModifyLauncher):
+    fake_roles: List["Role"]
+    fake_groups: List["Group"]
+    fake_users: List["User"]
 
     fixture_names = (
         "flask_app_client",
@@ -35,21 +38,20 @@ class TestGroupRoleManager(GeneralModify):
         "fake_groups",
         "fake_users",
     )
-    schema = "GroupSchema"
     item_view = "Group.GroupItemView"
-    login_roles = [ROLES.GroupManager]
-    delete_param_key = "group_id"
+    login_roles = ["GroupManager"]
+    edit_param_key = "group_id"
     data = {"name": "temp_group", "description": "", "default": False, "roles": []}
 
-    def _modify_group(self, indexlst: List[int], roles: Set[str]) -> Group:
+    def _modify_group(self, indexlst: List[int], roles: Set[str]) -> "Group":
         self._set_up_user()
         item = self._get_modified_item()
         _roles = [
-            {"id": self.fake_roles[index].id, "name": self.fake_roles[index].name}
+            {"id": self.fake_roles[index].id_, "name": self.fake_roles[index].name}
             for index in indexlst
         ]
         data = self.data.copy()
-        data["roles"] = _roles  # type: ignore
+        data["roles"] = _roles
         res = self._item_modify_request(data)
         assert get_roles(res) >= roles
         return item
@@ -83,5 +85,5 @@ class TestGroupRoleManager(GeneralModify):
         ]:
             self._modify_group(group_idxlst, set(role_idlst))
 
-    def _get_modified_item(self) -> Group:
+    def _get_modified_item(self) -> "Group":
         return self.fake_groups[0]

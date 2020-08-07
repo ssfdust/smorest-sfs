@@ -70,7 +70,7 @@ def render_crud_modules(module_name: str, config: Dict):
     Path(test_module_path, "resources").mkdir(parents=True)
 
     template_and_paths_list = [
-        ["%s.py.template" % template_file, "%s/%s.py" % (module_path, template_file),]
+        ["%s.py.template" % template_file, "%s/%s.py" % (module_path, template_file)]
         for template_file in ("__init__", "models", "resources", "schemas",)
     ]
     test_template_and_path_list = [

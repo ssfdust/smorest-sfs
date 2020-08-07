@@ -5,10 +5,10 @@ from typing import Any
 import pytest
 from flask import url_for
 
-from tests._utils.injection import FixturesInjectBase
+from tests._utils.launcher import Launcher
 
 
-class TestGeneralAccess(FixturesInjectBase):
+class TestGeneralAccess(Launcher):
     fixture_names = ("flask_app_client", "flask_app", "regular_user")
 
     @pytest.mark.parametrize(

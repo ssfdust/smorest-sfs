@@ -2,24 +2,26 @@
 # -*- coding: utf-8 -*-
 
 import os
-from typing import Iterator, Type
+from typing import TYPE_CHECKING, Iterator, Type
 
 import marshmallow as ma
 import pytest
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 
-from smorest_sfs.extensions import babel
-from smorest_sfs.extensions.api import Api
-from smorest_sfs.extensions.marshal.bases import BasePageSchema
-from smorest_sfs.extensions.sqla import Model, SurrogatePK
-from smorest_sfs.extensions.sqla.db_instance import SQLAlchemy  # type: ignore
 from tests._utils.tables import drop_tables
 
 TABLES = ["test_pagination"]
 
+if TYPE_CHECKING:
+    from smorest_sfs.extensions.sqla import Model
+    from smorest_sfs.extensions.api import Api
 
-def init_flaskapp(db: SQLAlchemy) -> Flask:  # type: ignore
+
+def init_flaskapp(db: SQLAlchemy) -> Flask:
     # pylint: disable=W0621
+    from smorest_sfs.extensions import babel
+
     flask_app = Flask("TestApi")
     flask_app.config["OPENAPI_VERSION"] = "3.0.2"
     flask_app.config["BABEL_DEFAULT_TIMEZONE"] = "Asia/Shanghai"
@@ -41,8 +43,11 @@ def api_db() -> SQLAlchemy:
 
 
 @pytest.fixture(scope="package")
-def TestPagination(api_db: SQLAlchemy) -> Type[Model]:  # type: ignore
+def TestPagination(api_db: SQLAlchemy) -> Type["Model"]:
+    from smorest_sfs.extensions.sqla import Model, SurrogatePK
+
     # pylint: disable=W0621
+
     class TestPagination(SurrogatePK, Model):
 
         __tablename__ = "test_pagination"
@@ -53,7 +58,7 @@ def TestPagination(api_db: SQLAlchemy) -> Type[Model]:  # type: ignore
 
 
 @pytest.fixture(scope="package")
-def api_app(api_db: SQLAlchemy) -> Iterator[Flask]:  # type: ignore
+def api_app(api_db: SQLAlchemy) -> Iterator[Flask]:
     # pylint: disable=W0621
     flask_app = init_flaskapp(api_db)
 
@@ -65,7 +70,9 @@ def api_app(api_db: SQLAlchemy) -> Iterator[Flask]:  # type: ignore
 
 
 @pytest.fixture(scope="package")
-def api(api_app: Flask) -> Api:
+def api(api_app: Flask) -> "Api":
+    from smorest_sfs.extensions.api import Api
+
     # pylint: disable=W0621
     return Api(api_app)
 
@@ -83,6 +90,8 @@ def TestSchema() -> Type[ma.Schema]:
 @pytest.fixture(scope="package")
 def TestPageSchema(TestSchema: ma.Schema) -> Type[ma.Schema]:
     # pylint: disable=W0621
+    from smorest_sfs.extensions.marshal.bases import BasePageSchema
+
     class TestPageSchema(BasePageSchema):
 
         data = ma.fields.List(ma.fields.Nested(TestSchema))
@@ -91,7 +100,7 @@ def TestPageSchema(TestSchema: ma.Schema) -> Type[ma.Schema]:
 
 
 @pytest.fixture(scope="package", autouse=True)
-def setup_db(api_app: Flask, api_db: SQLAlchemy, TestPagination: Type[Model]):  # type: ignore
+def setup_db(api_app: Flask, api_db: SQLAlchemy, TestPagination: Type["Model"]) -> None:
     # pylint: disable=W0613, W0621
     api_db.create_all()
     data = [TestPagination(name=str(i + 1)) for i in range(20)]

@@ -5,8 +5,9 @@ OPENAPI_SWAGGER_UI_PATH = 'swagger'
 OPENAPI_SWAGGER_UI_URL = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
 OPENAPI_URL_PREFIX = 'doc'
 MODULE_BASE_PREFIX = '/api/v1'
+TESTING = true
 
-SQLALCHEMY_DATABASE_URI = 'postgresql://smorest-admin:smoret2019@localhost/smorest-testing'
+SQLALCHEMY_DATABASE_URI = 'postgresql://smorest-admin:smorest2019@localhost/smorest-testing'
 SQLALCHEMY_TRACK_MODIFICATIONS = false
 
 JWT_SECRET_KEY = '8TI8/KpMArmw9ZVtrXA&amp;=7w\&amp;I$wbX'

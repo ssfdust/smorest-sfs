@@ -5,13 +5,13 @@ from typing import Dict
 import pytest
 
 from smorest_sfs.modules.auth import ROLES
-from tests._utils.injection import GeneralGet
+from tests._utils.launcher import AccessLauncher
 
 
-class TestListView(GeneralGet):
+class TestListView(AccessLauncher):
 
     login_roles = [ROLES.EmailTemplateManager]
-    fixture_names = ("flask_app_client", "flask_app", "regular_user")
+    fixture_names = ("flask_app_client", "flask_app", "regular_user", "email_templates")
     listview = "EmailTemplate.EmailTemplateListView"
     view = "EmailTemplate.EmailTemplateView"
     item_view = "EmailTemplate.EmailTemplateItemView"

@@ -6,6 +6,7 @@ from typing import Iterator
 import pytest
 from flask import Flask
 from flask.testing import FlaskClient
+from flask.wrappers import Response
 from kombu import Queue
 from loguru import logger
 
@@ -35,6 +36,6 @@ def logger_app(queue: Queue) -> Iterator[Flask]:
 
 
 @pytest.fixture(scope="package")
-def logger_test_client(logger_app: Flask) -> FlaskClient:
+def logger_test_client(logger_app: Flask) -> "FlaskClient[Response]":
     # pylint: disable=W0621
     return logger_app.test_client()

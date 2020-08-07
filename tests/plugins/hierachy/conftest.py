@@ -2,17 +2,21 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
-from typing import Callable, Type
+from typing import TYPE_CHECKING, Callable, Type
 
 import pytest
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy_mptt.mixins import BaseNestedSets
+from sqlalchemy.orm import Session
 
-from smorest_sfs.extensions.sqla import Model, SurrogatePK
 from smorest_sfs.plugins.hierachy_xlsx.parsers import HierachyParser
 from smorest_sfs.utils.paths import ProjectPath
 
 from .utils import get_parsed_reader
+
+if TYPE_CHECKING:
+    from .models import (
+        TestCodeTable as TestCodeTable_,
+        TestHierachyTable as TestHierachyTable_,
+    )
 
 
 @pytest.fixture
@@ -25,18 +29,11 @@ def xlsx_path_func() -> Callable[[str], Path]:
 
 
 @pytest.fixture
-def TestHierachyTable(db: SQLAlchemy) -> Type[Model]:
+def TestHierachyTable() -> Type["TestHierachyTable_"]:
     # pylint: disable=W0621
-    class TestHierachyTable(Model, SurrogatePK, BaseNestedSets):
-        name = db.Column(db.String(length=20), nullable=False)
-        value = db.Column(db.Integer, nullable=False)
+    from .models import TestHierachyTable as TestHierachyTable__
 
-        def __repr__(self) -> str:
-            return self.name
-
-    db.create_all()
-
-    return TestHierachyTable
+    return TestHierachyTable__
 
 
 @pytest.fixture
@@ -46,16 +43,16 @@ def parser(xlsx_path_func: Callable[[str], Path]) -> HierachyParser:
 
 
 @pytest.fixture
-def TestCodeTable(db: SQLAlchemy) -> Type[Model]:
+def TestCodeTable() -> Type["TestCodeTable_"]:
     # pylint: disable=W0621
-    class TestCodeTable(Model, SurrogatePK, BaseNestedSets):
-        name = db.Column(db.String(length=20), nullable=False)
-        type_code = db.Column(db.String(length=20), nullable=False)
-        value = db.Column(db.Integer, nullable=False)
+    from .models import TestCodeTable as TestCodeTable__
 
-        def __repr__(self) -> str:
-            return self.name
+    return TestCodeTable__
 
-    db.create_all()
 
-    return TestCodeTable
+@pytest.fixture
+def session() -> "Session":
+    from .models import Session_
+
+    session: "Session" = Session_()
+    return session

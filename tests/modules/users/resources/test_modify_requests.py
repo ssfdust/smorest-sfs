@@ -1,28 +1,29 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from typing import Any, Dict, List, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Union
 
 import pytest
 from flask import url_for
 
-from smorest_sfs.modules.auth import ROLES
-from smorest_sfs.modules.roles.models import Role
-from smorest_sfs.modules.users.models import User
-from tests._utils.injection import GeneralModify
+from tests._utils.launcher import ModifyLauncher
+
+if TYPE_CHECKING:
+    from smorest_sfs.modules.users.models import User
+    from smorest_sfs.modules.roles.models import Role
 
 
-class TestUserModify(GeneralModify):
+class TestUserModify(ModifyLauncher):
 
-    roles: List[Role]
-    regular_user: User
-    forget_passwd_user: User
-    inactive_user: User
-    guest_user: User
-    items = "user_items"
-    delete_param_key = "user_id"
+    roles: List["Role"]
+    regular_user: "User"
+    forget_passwd_user: "User"
+    inactive_user: "User"
+    guest_user: "User"
+    items = "users"
+    edit_param_key = "user_id"
     item_view = "User.UserItemView"
     view = "User.UserView"
-    login_roles = [ROLES.UserManager]
+    login_roles = ["UserManager"]
     role_dict: List[Dict[str, Union[str, int]]]
 
     fixture_names = (
@@ -34,7 +35,7 @@ class TestUserModify(GeneralModify):
         "guest_user",
         "fake_roles",
         "fake_groups",
-        "user_items",
+        "users",
     )
     data = {
         "phonenum": "12121212",
@@ -43,17 +44,19 @@ class TestUserModify(GeneralModify):
         "email": "66666",
         "password": "7777",
         "active": False,
-        "userinfo": {"first_name": "tt", "last_name": "qaqa", "sex": 2, "age": 13,},
+        "userinfo": {"first_name": "tt", "last_name": "qaqa", "sex": 2, "age": 13},
     }
 
     @pytest.fixture(autouse=True)
     def inject_roles(self) -> None:
+        from smorest_sfs.modules.roles.models import Role
+
         setattr(
             self,
             "roles",
-            Role.where(name__in=[ROLES.GroupManager, ROLES.EmailTemplateManager]).all(),
+            Role.where(name__in=["GroupManager", "EmailTemplateManager"]).all(),
         )
-        setattr(self, "role_dict", [{"id": r.id, "name": r.name} for r in self.roles])
+        setattr(self, "role_dict", [{"id": r.id_, "name": r.name} for r in self.roles])
 
     def _get_data(self, **kwargs: Any) -> Dict[str, Any]:
         data = self.data.copy()
@@ -66,6 +69,8 @@ class TestUserModify(GeneralModify):
             assert not user.roles and not user.groups
 
     def test_register(self) -> None:
+        from smorest_sfs.modules.users.models import User
+
         with self.flask_app.test_request_context():
             data = self._get_data(
                 username="fake_user", email="fake_user@email.com", phonenum="1234"
@@ -80,7 +85,7 @@ class TestUserModify(GeneralModify):
             )
 
     def test_modify_userinfo(self) -> None:
-        with self.flask_app_client.login(self.regular_user, [ROLES.User]) as client:
+        with self.flask_app_client.login(self.regular_user, ["User"]) as client:
             with self.flask_app.test_request_context():
                 url = url_for("User.UserSelfView")
                 data = self._get_data(
@@ -95,16 +100,14 @@ class TestUserModify(GeneralModify):
                 )
 
     def test_item_modify(self) -> None:
-        with self.flask_app_client.login(
-            self.guest_user, [ROLES.UserManager]
-        ) as client:
+        with self.flask_app_client.login(self.guest_user, ["UserManager"]) as client:
             with self.flask_app.test_request_context():
-                url = url_for("User.UserItemView", user_id=self.guest_user.id)
+                url = url_for("User.UserItemView", user_id=self.guest_user.id_)
                 data = self._get_data(
                     username=self.guest_user.username,
                     email=self.guest_user.email,
                     phonenum="9527",
-                    roles=[{"id": r.id, "name": r.name} for r in self.roles],
+                    roles=[{"id": r.id_, "name": r.name} for r in self.roles],
                 )
                 resp = client.put(url, json=data)
                 assert (

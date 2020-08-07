@@ -47,13 +47,13 @@ def create_user(user: User, is_admin: bool = False) -> User:
     """
     user.roles = Role.get_by_user_default(is_admin)
     avator = (
-        Storages(
+        Storages(  # type: ignore
             store=load_avator_from_path(ADMIN_AVATOR["path"]),
             saved=True,
             **ADMIN_AVATOR
         )
         if is_admin
-        else Storages(
+        else Storages(  # type: ignore
             store=load_avator_from_path(USER_AVATOR["path"]), saved=True, **USER_AVATOR
         )
     )

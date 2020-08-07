@@ -3,10 +3,9 @@
 """
 测试辅助工具集
 """
-from typing import List, Tuple
+from typing import Any, List, Tuple
 
-from smorest_sfs.extensions.sqla import Model
-from smorest_sfs.extensions.sqla.db_instance import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 
 
 def drop_tables(db: SQLAlchemy, table_names: List[str]) -> None:
@@ -15,7 +14,7 @@ def drop_tables(db: SQLAlchemy, table_names: List[str]) -> None:
     db.metadata.drop_all(bind=bind, tables=tables)
 
 
-def clear_instances(db: SQLAlchemy, instances: Tuple[Model, ...]) -> None:
+def clear_instances(db: SQLAlchemy, instances: Tuple[Any, ...]) -> None:
     for instance in instances:
         mapper = instance.__class__.__mapper__
         if instance not in db.session:
@@ -23,5 +22,4 @@ def clear_instances(db: SQLAlchemy, instances: Tuple[Model, ...]) -> None:
 
         db.session.query(instance.__class__).filter(
             mapper.primary_key[0] == mapper.primary_key_from_instance(instance)[0]
-        ).delete()
-    db.session.commit()
+        ).delete(synchronize_session="fetch")

@@ -154,7 +154,7 @@ def migrate(
 
 
 @app_context_task(
-    help={"revision": "revision identifier", "directory": "migration script directory",}
+    help={"revision": "revision identifier", "directory": "migration script directory"}
 )
 def edit(context, revision="current", directory="migrations"):
     """Upgrade to a later version"""
@@ -234,7 +234,7 @@ def downgrade(
 
 
 @app_context_task(
-    help={"revision": "revision identifier", "directory": "migration script directory",}
+    help={"revision": "revision identifier", "directory": "migration script directory"}
 )
 def show(context, directory="migrations", revision="head"):
     """Show the revision denoted by the given symbol."""

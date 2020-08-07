@@ -33,22 +33,22 @@ def fake_groups(
     # pylint: disable=W0613
     for _ in temp_db_instance_helper(
         Group(
-            id=4,
+            id_=4,
             name="temp_group_with_a_b_c",
             roles=Role.where(name__in=["a", "b", "c"]).all(),
         ),
         Group(
-            id=5,
+            id_=5,
             name="temp_group_with_c_f",
             roles=Role.where(name__in=["c", "f"]).all(),
         ),
         Group(
-            id=6,
+            id_=6,
             name="temp_group_with_c_d_e",
             roles=Role.where(name__in=["c", "d", "e"]).all(),
         ),
         Group(
-            id=7, name="temp_group_with_f", roles=Role.where(name__in=["f", "q"]).all()
+            id_=7, name="temp_group_with_f", roles=Role.where(name__in=["f", "q"]).all()
         ),
     ):
         yield _
@@ -74,7 +74,7 @@ def fake_users(
             email="fake_2",
             active=True,
             roles=Role.where(name__in=["c", "a", "b"]).all(),
-            groups=[Group.get_by_id(4)],
+            groups=[Group.find_or_fail(4)],
             userinfo=UserInfo(),
         ),
         User(
@@ -82,7 +82,7 @@ def fake_users(
             password="password",
             email="fake_3",
             active=True,
-            groups=[Group.get_by_id(5)],
+            groups=[Group.find(5)],
             roles=Role.where(name__in=["f", "c"]).all(),
             userinfo=UserInfo(),
         ),
@@ -92,7 +92,7 @@ def fake_users(
             email="fake_4",
             active=True,
             roles=Role.where(name__in=["f", "a", "c", "d", "e"]).all(),
-            groups=[Group.get_by_id(6)],
+            groups=[Group.find(6)],
             userinfo=UserInfo(),
         ),
         User(

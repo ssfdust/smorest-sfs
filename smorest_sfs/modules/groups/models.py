@@ -6,10 +6,16 @@
 """
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from sqlalchemy_mptt import BaseNestedSets
 
 from smorest_sfs.extensions.sqla import Model, SurrogatePK, db
 from smorest_sfs.utils.sqla import RelateTableArgs, create_relation_table
+
+if TYPE_CHECKING:
+    from smorest_sfs.modules.users.models import User
+    from smorest_sfs.modules.roles.models import Role
 
 groups_users = create_relation_table(
     db, RelateTableArgs("groups_users", "group_id", "user_id")
@@ -30,6 +36,7 @@ class Group(Model, SurrogatePK, BaseNestedSets):
     :attr users 所有用户
     """
 
+    sqlalchemy_mptt_pk_name = "id_"
     __tablename__ = "groups"
 
     name = db.Column(db.String(length=128), nullable=False, doc="用户组名称")
@@ -38,8 +45,8 @@ class Group(Model, SurrogatePK, BaseNestedSets):
     users = db.relationship(
         "User",
         secondary="groups_users",
-        primaryjoin="Group.id == groups_users.c.group_id",
-        secondaryjoin="User.id == groups_users.c.user_id",
+        primaryjoin="Group.id_ == groups_users.c.group_id",
+        secondaryjoin="User.id_ == groups_users.c.user_id",
         doc="组下用户",
         foreign_keys="[groups_users.c.group_id, groups_users.c.user_id]",
         active_history=True,
@@ -48,9 +55,10 @@ class Group(Model, SurrogatePK, BaseNestedSets):
     )
     roles = db.relationship(
         "Role",
+        uselist=True,
         secondary="groups_roles",
-        primaryjoin="Group.id == groups_roles.c.group_id",
-        secondaryjoin="Role.id == groups_roles.c.role_id",
+        primaryjoin="Group.id_ == groups_roles.c.group_id",
+        secondaryjoin="Role.id_ == groups_roles.c.role_id",
         doc="组下默认角色",
         foreign_keys="[groups_roles.c.group_id, groups_roles.c.role_id]",
         active_history=True,

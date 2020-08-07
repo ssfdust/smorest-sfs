@@ -21,6 +21,8 @@
     用户、权限、组相关模块
 """
 
+from typing import Dict
+
 from flask_smorest import Blueprint
 
 from . import permissions
@@ -32,5 +34,7 @@ PERMISSIONS = permissions.PERMISSIONS  # alias
 blp = Blueprint("Auth", __name__, url_prefix="/auth", description="用户登录退出密码管理模块")
 
 preload_modules = ["resources", "models", "jwt_ext"]
+
+ma_mapping: Dict[str, str] = {}
 
 # from . import resources

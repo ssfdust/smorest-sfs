@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from pathlib import Path
-from typing import Any, Dict, Iterator, List, Optional, Protocol, Tuple, Union
+from operator import itemgetter
+from typing import Any, Dict, List, Optional, Protocol
 
-import openpyxl
-from openpyxl import Workbook
-from openpyxl.worksheet.worksheet import Worksheet
+from pyexcel import get_book
+from pyexcel.book import Book
+from pyexcel.sheet import Sheet
 
 from smorest_sfs.utils.text import camel_to_snake
 
@@ -20,97 +20,81 @@ class IOProtocol(Protocol):
 
 class _HierachyParser:
     """
-    单excel阅读器
-
     将文件行转为文件列
+
+    关系表：表格名称为`Relations`的表格，用一个类似展开的方式描述
+    等级关系。
+    例如：
+    A | B  | C
+    B | B1 | C1
+    C |    | C2
+
+    表示：A、B、C为父级，B1为B的子级，C1，C2为C的子级，A没有子级。
+
+    属性表：表格名为`Attrs`的表格，用类似数据库表的形式表示一个对象
+    的属性。
+    例如：
+    Name |    Date    | Action
+      A  | 2020-07-18 |  Read
+      B  | 2020-07-18 |  Write
+      C  | 2020-07-18 |  Read
+      B1 | 2020-07-18 |  Write
+      C1 | 2020-07-18 |  Read
+      C2 | 2020-07-18 |  Write
+
+    将两张表格联系起来，就可以得到完整的树型结构信息。
     """
 
     def __init__(
-        self,
-        filename: Optional[str] = None,
-        filepath: Union[str, Path, None] = None,
-        filedata: Optional[IOProtocol] = None,
+        self, stream: Optional[IOProtocol] = None,
     ):
-        self.filepath = Path(filepath) if filepath else None
-        self.filename = self.filepath.name if self.filepath else filename
-        self.workbook: Workbook = openpyxl.load_workbook(
-            filedata if filedata else filepath
-        )
-        self.relation_sheet: Worksheet
-        self.attr_sheet: Worksheet
+        """初始化
+
+        Attributes:
+            mapping: 主键与名字的对应关系
+            ident: 主键名称
+            title_list: 表栏目名称
+            relation_list: 关系名称
+        """
+        self.workbook: Book = get_book(file_stream=stream, file_type="xlsx")
+        self._sheet_names: List[str] = self.workbook.sheet_names()
         self.mapping: Dict[str, Any] = {}
         self.ident: Optional[str] = None
         self.title_list: List[str] = []
         self.relation_list: List[List[Any]] = []
 
+        self.relation_sheet: Sheet
+        self.attr_sheet: Sheet
+
     def _load_workbook(self) -> None:
-        self.relation_sheet = self.workbook["relation"]
-        self.attr_sheet = self.workbook["attr"]
+        """加载关系表以及属性表"""
+        self.relation_sheet = self.workbook["Relations"]
+        self.attr_sheet = self.workbook["Attrs"]
+        self.attr_sheet.name_columns_by_row(0)
 
 
-class _AttrParser:
-    attr_sheet: Worksheet
-    ident: Optional[str]
-    mapping: Dict[str, Any]
-    title_list: List[str]
-
+class _AttrParser(_HierachyParser):
     def _parse_attr_worksheet(self) -> None:
-        self.__get_title_list_and_ident()
-        self.__check_ident()
-        self.__parse_attr_worksheet()
+        self._get_title_list_and_ident()
+        self._parse_attrs()
 
-    def __parse_attr_worksheet(self) -> None:
-        for data_row in self.attr_sheet.iter_rows(min_row=2, values_only=True):
-            item: Dict[str, Any] = dict([*zip(self.title_list, data_row)])
-            if self.ident:
+    def _parse_attrs(self) -> None:
+        """过滤主键为空的行，并以主键为标记加入到mapping"""
+        if self.ident:
+            self.attr_sheet.colnames = self.title_list
+            for item in filter(itemgetter(self.ident), self.attr_sheet.to_records()):
                 self.mapping[item[self.ident]] = item
 
-    def __get_title_list_and_ident(self) -> None:
-        self.title_list = list(self.__iter_raw_title())
-
-    def __iter_raw_title(self) -> Iterator[str]:
-        for row in self.attr_sheet.iter_rows(min_row=1, max_row=1, values_only=True):
-            for title in self.__parse_titile_row(row):
-                yield title
-
-    def __parse_titile_row(self, row: List[str]) -> Iterator[str]:
-        for item in row:
-            if item:
-                yield self.__confirm_ident(item.strip())
-
-    def __check_ident(self) -> None:
-        if self.ident is None and NAME_KEY in self.title_list:
-            self.ident = NAME_KEY
-        elif self.ident is None and NAME_KEY not in self.title_list:
-            raise ValueError
-
-    def __confirm_ident(self, ident: str) -> str:
-        if IDENT_KEY in ident:
-            ident = ident.replace(IDENT_KEY, "")
-            self.ident = camel_to_snake(ident)
-        return camel_to_snake(ident)
+    def _get_title_list_and_ident(self) -> None:
+        """获取下划线形式的表成员"""
+        self.title_list = list(map(camel_to_snake, self.attr_sheet.colnames))
+        if len(self.title_list) > 0:
+            self.ident = self.title_list[0]
+        else:
+            raise ValueError("The excel column name row must be longer than zero.")
 
 
-class _RelationParser:
-    relation_sheet: Worksheet
-    relation_list: List[List[str]]
-
-    @staticmethod
-    def __parse_one_col(col: Tuple[Any]) -> List[Any]:
-        ret_col = []
-        for value in col:
-            if value is None:
-                break
-            ret_col.append(value)
-        return ret_col
-
-    def _parse_relation_worksheet(self) -> None:
-        for col in self.relation_sheet.iter_cols(values_only=True):
-            ret_col = self.__parse_one_col(col)
-            self.relation_list.append(ret_col)
-
-
-class HierachyParser(_HierachyParser, _RelationParser, _AttrParser):
+class HierachyParser(_AttrParser):
     def _parse_worksheet(self) -> None:
         self._parse_attr_worksheet()
         self._parse_relation_worksheet()
@@ -118,3 +102,10 @@ class HierachyParser(_HierachyParser, _RelationParser, _AttrParser):
     def parse(self) -> None:
         self._load_workbook()
         self._parse_worksheet()
+
+    def _parse_relation_worksheet(self) -> None:
+        relation: Sheet = self.relation_sheet.clone()
+        relation.transpose()
+        self.relation_list = [
+            [key for key in filter(any, cols)] for cols in relation.to_array()
+        ]

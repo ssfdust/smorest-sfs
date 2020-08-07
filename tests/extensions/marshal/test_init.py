@@ -1,15 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """测试自定义ma的创建"""
-from flask import Flask
-from flask_sqlalchemy import DefaultMeta
-from marshmallow import EXCLUDE
+from typing import Type
 
-from smorest_sfs.extensions.marshal import ma
+from flask import Flask
+from flask_sqlalchemy.model import Model
+from marshmallow import EXCLUDE
 
 
 class TestMaCreataion:
     def test_ma_meta(self, ma_app: Flask) -> None:
+        from smorest_sfs.extensions.marshal import ma
 
         ma.init_app(ma_app)
 
@@ -17,13 +18,14 @@ class TestMaCreataion:
 
         assert TestSchema.Meta.unknown == EXCLUDE  # type: ignore
 
-    def test_ma_converter(self, ma_app: Flask, DateTimeTestTable: DefaultMeta) -> None:
+    def test_ma_converter(self, ma_app: Flask, DateTimeTestTable: Type[Model]) -> None:
         from smorest_sfs.extensions.marshal import (
             SQLAlchemySchema,
             SQLAlchemyAutoSchema,
             auto_field,
         )
         from smorest_sfs.extensions.marshal.fields import PendulumField as field
+        from smorest_sfs.extensions.marshal import ma
 
         ma.init_app(ma_app)
         with ma_app.app_context():

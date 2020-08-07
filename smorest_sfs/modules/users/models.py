@@ -8,12 +8,18 @@
 """
 from __future__ import annotations
 
-from marshmallow.validate import OneOf, Range
+from typing import TYPE_CHECKING
+
+from sqlalchemy_utils.types import PasswordType
+
 from smorest_sfs.extensions.sqla import Model, SurrogatePK, db
 from smorest_sfs.modules.groups.models import Group, groups_users
 from smorest_sfs.modules.roles.models import permission_roles
+from smorest_sfs.modules.storages.models import Storages
 from smorest_sfs.utils.sqla import RelateTableArgs, create_relation_table
-from sqlalchemy_utils.types import PasswordType
+
+if TYPE_CHECKING:
+    from smorest_sfs.modules.roles.models import Role, Permission
 
 roles_users = create_relation_table(
     db, RelateTableArgs("roles_users", "role_id", "user_id")
@@ -55,42 +61,35 @@ class User(Model, SurrogatePK):
         secondary=roles_users,
         uselist=True,
         doc="所有角色",
-        primaryjoin="foreign(roles_users.c.user_id) == User.id",
-        secondaryjoin="foreign(roles_users.c.role_id) == Role.id",
-        backref=db.backref("users", lazy="dynamic", doc="所有用户"),
-        order_by="Role.id",
-        info={"marshmallow": {"column": ["id", "name"]}},
+        primaryjoin="foreign(roles_users.c.user_id) == User.id_",
+        secondaryjoin="foreign(roles_users.c.role_id) == Role.id_",
+        # backref=db.backref("users", lazy="dynamic", doc="所有用户"),
+        order_by="Role.id_",
     )
     permissions = db.relationship(
         "Permission",
         secondary=user_permissions,
         doc="权限",
-        primaryjoin="User.id == roles_users.c.user_id",
-        secondaryjoin="Permission.id == permission_roles.c.permission_id",
+        primaryjoin="User.id_ == roles_users.c.user_id",
+        secondaryjoin="Permission.id_ == permission_roles.c.permission_id",
         viewonly=True,
-        info={"marshmallow": {"dump_only": True, "column": ["id", "name"]}},
     )
     userinfo = db.relationship(
         "UserInfo",
         doc="用户",
-        primaryjoin="User.id == UserInfo.uid",
+        primaryjoin="User.id_ == UserInfo.uid",
         foreign_keys="UserInfo.uid",
         uselist=False,
         lazy="joined",
-        info={
-            "marshmallow": {
-                "column": ["avator_id", "first_name", "last_name", "sex", "age"]
-            }
-        },
     )
     groups = db.relationship(
         Group,
         secondary=groups_users,
-        primaryjoin="User.id == groups_users.c.user_id",
-        secondaryjoin=Group.id == groups_users.c.group_id,
+        uselist=True,
+        primaryjoin="User.id_ == groups_users.c.user_id",
+        secondaryjoin=Group.id_ == groups_users.c.group_id,
         doc="组下用户",
         foreign_keys=[groups_users.c.group_id, groups_users.c.user_id],
-        info={"marshmallow": {"column": ["id", "name"]}},
     )
 
     @classmethod
@@ -109,7 +108,9 @@ class User(Model, SurrogatePK):
 
     @property
     def nickname(self) -> str:
-        return self.userinfo.nickname
+        if self.userinfo:
+            return self.userinfo.nickname
+        return self.username
 
 
 class UserInfo(SurrogatePK, Model):
@@ -131,54 +132,20 @@ class UserInfo(SurrogatePK, Model):
     avator_id = db.Column(
         db.Integer, doc="头像ID", info={"marshmallow": {"dump_only": True}}
     )
-    uid = db.Column(db.Integer, doc="用户ID", info={"marshmallow": {"dump_only": True}})
-    sex = db.Column(
-        db.Integer,
-        doc="性别",
-        default=1,
-        info={
-            "marshmallow": {
-                "validate": [OneOf([1, 2])],
-                "allow_none": False,
-                "required": True,
-            }
-        },
-    )
-    age = db.Column(
-        db.Integer,
-        doc="年龄",
-        info={
-            "marshmallow": {
-                "allow_none": False,
-                "validate": [Range(1, None)],
-                "required": True,
-            }
-        },
-    )
-    first_name = db.Column(
-        db.String(80),
-        doc="姓",
-        info={"marshmallow": {"allow_none": False, "required": True}},
-    )
-    last_name = db.Column(
-        db.String(80),
-        doc="名",
-        info={"marshmallow": {"allow_none": False, "required": True}},
-    )
+    uid = db.Column(db.Integer, doc="用户ID")
+    sex = db.Column(db.Integer, doc="性别", default=1,)
+    age = db.Column(db.Integer, doc="年龄",)
+    first_name = db.Column(db.String(80), doc="姓",)
+    last_name = db.Column(db.String(80), doc="名",)
     user = db.relationship(
-        "User",
-        doc="用户",
-        primaryjoin="User.id == UserInfo.uid",
-        foreign_keys=uid,
-        info={"marshmallow": {"dump_only": True}},
+        "User", doc="用户", primaryjoin="User.id_ == UserInfo.uid", foreign_keys=uid,
     )
     avator = db.relationship(
-        "Storages",
-        primaryjoin="Storages.id == UserInfo.avator_id",
+        Storages,
+        primaryjoin="Storages.id_ == UserInfo.avator_id",
         foreign_keys=avator_id,
         doc="头像",
         lazy="joined",
-        info={"marshmallow": {"dump_only": True}},
     )
 
     def __repr__(self) -> str:

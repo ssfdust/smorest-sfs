@@ -10,7 +10,7 @@ from smorest_sfs.modules.logs.models import Log, ResponseLog
 
 
 @pytest.fixture
-def log_items(
+def logs(
     flask_app: Flask, temp_db_instance_helper: Callable[..., Iterator[Any]],
 ) -> Iterator[Tuple[Log, ...]]:
     # pylint: disable=W0613
@@ -84,7 +84,7 @@ def log_items(
 
 
 @pytest.fixture
-def resp_log_items(
+def resp_logs(
     flask_app: Flask, temp_db_instance_helper: Callable[..., Iterator[Any]],
 ) -> Iterator[Tuple[ResponseLog, ...]]:
     # pylint: disable=W0613
@@ -161,4 +161,5 @@ def LogSchema(flask_app: Flask) -> Type[Schema]:
     # pylint: disable=W0621, W0613
     from smorest_sfs.modules.logs.schemas import LogSchema
 
-    return LogSchema
+    schema: Type[Schema] = LogSchema
+    return schema

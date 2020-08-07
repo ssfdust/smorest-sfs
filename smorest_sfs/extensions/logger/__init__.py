@@ -21,7 +21,8 @@
 from datetime import datetime
 from typing import Any, Dict, Optional, Protocol, Type
 
-from flask import Flask, Response, request
+from flask import Flask, request
+from flask.wrappers import Response
 from loguru import logger
 
 
@@ -36,17 +37,18 @@ class Publisher(Protocol):
 
 def _parse_args(resp: Response) -> Dict[str, Any]:
     if request.method == "GET":
-        return request.args.to_dict()
-    return resp.json
+        return request.args.to_dict()  # type: ignore
+    return resp.json  # type: ignore
 
 
 def _parse_ip() -> str:
     nginx_remote = "X-Forwarded-For"
-    return (
+    ip_address: str = (
         request.headers[nginx_remote]
         if nginx_remote in request.headers
         else request.remote_addr
     )
+    return ip_address
 
 
 class Logger:

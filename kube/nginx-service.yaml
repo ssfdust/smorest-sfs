@@ -13,8 +13,8 @@ spec:
   type: LoadBalancer
   ports:
   - name: "8083"
-    port: 8083
     nodePort: 8083
+    port: 8083
     targetPort: 8083
   selector:
     io.kompose.service: nginx

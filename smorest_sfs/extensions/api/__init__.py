@@ -3,15 +3,16 @@
     ~~~~~~~~~~~~~~~~~~~~
     smorest api配置模块
 """
-from typing import Any, Optional
+from typing import Any, Dict, Optional, Tuple
 
 from flask_smorest import Api as BaseApi
 from flask_smorest import Blueprint
+from sqlalchemy_mixins import ModelNotFoundError
 
 from smorest_sfs.extensions.marshal import UploadField
 
 
-class Api(BaseApi):
+class Api(BaseApi):  # type: ignore
     """为flask-smorest的API模块提供base_prefix功能"""
 
     def register_blueprint(
@@ -38,12 +39,19 @@ class Api(BaseApi):
 
         self.spec.tag({"name": blp.name, "description": blp.description})
 
+    def _register_error_handlers(self) -> None:
+        super()._register_error_handlers()
+        self._app.register_error_handler(ModelNotFoundError, self.handle_find_fail)
+
+    def handle_find_fail(self, error: Any) -> Tuple[Dict[str, str], int]:
+        return {"message": "asasas"}, 404
+
 
 spec_kwargs = {
     "components": {
         "securitySchemes": {
-            "api_key": {"type": "http", "scheme": "bearer", "bearerFormat": "JWT",},
-            "refresh_key": {"type": "http", "scheme": "bearer", "bearerFormat": "JWT",},
+            "api_key": {"type": "http", "scheme": "bearer", "bearerFormat": "JWT"},
+            "refresh_key": {"type": "http", "scheme": "bearer", "bearerFormat": "JWT"},
         }
     }
 }

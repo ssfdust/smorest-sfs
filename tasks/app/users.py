@@ -13,7 +13,7 @@ from tasks.app._utils import app_context_task
 
 
 @app_context_task(
-    help={"email": "用户邮箱", "is-admin": "是否admin（默认：是）", "is-active": "启用（默认：是）",}
+    help={"email": "用户邮箱", "is-admin": "是否admin（默认：是）", "is-active": "启用（默认：是）"}
 )
 def create_user(context, email, is_admin=True, is_active=True):
     # pylint: disable=unused-argument

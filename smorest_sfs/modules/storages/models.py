@@ -7,10 +7,10 @@ from typing import Any
 
 from smorest_sfs.extensions.sqla import Model, SurrogatePK, db
 
-from .mixin import FileStorage, StoragesMixin
+from .mixin import StoragesMixin
 
 
-class Storages(StoragesMixin, Model, SurrogatePK):
+class Storages(Model, SurrogatePK, StoragesMixin):
     """
     文件管理表
 
@@ -23,8 +23,10 @@ class Storages(StoragesMixin, Model, SurrogatePK):
     :attr _store: FileStorage 文件
     """
 
+    __tablename__ = "storages"
+
     uid = db.Column(db.Integer, doc="用户ID")
 
-    def __init__(self, store: FileStorage, **kwargs: Any):
-        self.store = store
-        db.Model.__init__(self, **kwargs)
+    def __init__(self, **kwargs: Any):
+        self.store = kwargs.pop("store")
+        super().__init__(**kwargs)

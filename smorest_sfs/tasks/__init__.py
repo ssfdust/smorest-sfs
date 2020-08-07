@@ -1,3 +1,3 @@
 from smorest_sfs.utils.imports import import_submodules
 
-import_submodules(locals(), __name__, __path__)
+import_submodules(locals(), __name__, __path__)  # type: ignore

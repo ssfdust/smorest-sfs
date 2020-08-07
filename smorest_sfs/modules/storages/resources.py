@@ -5,8 +5,11 @@
 from typing import Any, Dict, Union
 
 from flask.views import MethodView
+from flask.wrappers import Response
 from loguru import logger
+from werkzeug.datastructures import FileStorage
 
+from smorest_sfs.extensions import db
 from smorest_sfs.extensions.marshal.bases import BaseMsgSchema
 from smorest_sfs.modules.auth import PERMISSIONS, ROLES
 from smorest_sfs.modules.auth.decorators import (
@@ -15,7 +18,7 @@ from smorest_sfs.modules.auth.decorators import (
     role_required,
 )
 from smorest_sfs.services.storages.handlers import StorageFactory
-from smorest_sfs.utils.storages import FileStorage, Response, make_response_from_store
+from smorest_sfs.utils.storages import make_response_from_store
 
 from . import blp, models, schemas
 
@@ -33,7 +36,7 @@ class StoragesView(MethodView):
         """
         获取文件
         """
-        storage = models.Storages.get_by_id(file_id)
+        storage = models.Storages.find_or_fail(file_id)
 
         return make_response_from_store(storage.store)
 
@@ -48,10 +51,11 @@ class StoragesView(MethodView):
         修改文件
         """
         args["store"] = args.pop("file")
-        storage = models.Storages.get_by_id(file_id)
+        storage = models.Storages.find_or_fail(file_id)
         factory = StorageFactory(storage)
-        logger.info(f"修改了文件{storage.name} id: {storage.id}")
-        factory.update(commit=True, **args)
+        logger.info(f"修改了文件{storage.name} id: {storage.id_}")
+        factory.update(**args)
+        db.session.commit()
 
         return {"code": 0, "msg": "success"}
 
@@ -62,9 +66,10 @@ class StoragesView(MethodView):
         """
         删除文件
         """
-        storage = models.Storages.get_by_id(file_id)
-        logger.info(f"删除了文件{storage.name} id: {storage.id}")
+        storage = models.Storages.find_or_fail(file_id)
+        logger.info(f"删除了文件{storage.name} id: {storage.id_}")
         storage.delete()
+        db.session.commit()
 
 
 @blp.route("/force/delete/<int:file_id>")
@@ -76,9 +81,10 @@ class ForceDeleteView(MethodView):
     @blp.response(BaseMsgSchema)
     def delete(self, file_id: int) -> Dict[str, Any]:
         """永久删除文件"""
-        storage = models.Storages.get_by_id(file_id)
+        storage = models.Storages.find_or_fail(file_id)
         factory = StorageFactory(storage)
         factory.hard_delete()
+        db.session.commit()
 
         return {"code": 0, "msg": "success"}
 
@@ -101,5 +107,6 @@ class UploadView(MethodView):
         args["store"] = args.pop("file")
         factory = StorageFactory(models.Storages(storetype=storetype, **args))
         factory.save()
+        db.session.commit()
 
-        return {"code": 0, "msg": "success", "data": {"file_id": factory.storage.id}}
+        return {"code": 0, "msg": "success", "data": {"file_id": factory.storage.id_}}

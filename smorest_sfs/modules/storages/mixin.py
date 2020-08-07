@@ -7,12 +7,10 @@
 """
 from typing import IO, Optional
 
+from werkzeug.datastructures import FileStorage
+
 from smorest_sfs.extensions import db
-from smorest_sfs.utils.storages import (
-    FileStorage,
-    load_storage_from_path,
-    save_storage_to_path,
-)
+from smorest_sfs.utils.storages import load_storage_from_path, save_storage_to_path
 
 
 class StoragesMixin:
@@ -32,7 +30,7 @@ class StoragesMixin:
     @property
     def store(self) -> FileStorage:
         """返回文件的FileStorage对象"""
-        if self.saved and not hasattr(self, "_store"):
+        if self.saved and not hasattr(self, "_store") and self.name and self.path:
             self._store = load_storage_from_path(self.name, self.path)
         elif not hasattr(self, "_store") and not self.saved:
             raise FileExistsError
@@ -49,7 +47,8 @@ class StoragesMixin:
             self.store.stream.seek(0)
         except ValueError:
             delattr(self, "_store")
-        return self.store.stream
+        stream: IO[bytes] = self.store.stream
+        return stream
 
     def save_store(self) -> None:
         """

@@ -29,6 +29,7 @@ from flask_jwt_extended import current_user
 from flask_sqlalchemy import BaseQuery
 from loguru import logger
 
+from smorest_sfs.extensions import db
 from smorest_sfs.extensions.api.decorators import paginate
 from smorest_sfs.extensions.marshal.bases import (
     BaseIntListSchema,
@@ -38,8 +39,11 @@ from smorest_sfs.extensions.marshal.bases import (
 from smorest_sfs.modules.auth import PERMISSIONS
 from smorest_sfs.modules.auth.decorators import doc_login_required, permission_required
 from smorest_sfs.modules.email_templates.models import EmailTemplate
+from smorest_sfs.plugins.samanager import SqlaManager
 
 from . import blp, models, schemas
+
+samanager: SqlaManager[EmailTemplate] = SqlaManager(db.session)
 
 
 @blp.route("/options")
@@ -47,7 +51,7 @@ class EmailTemplateListView(MethodView):
     @doc_login_required
     @permission_required(PERMISSIONS.EmailTemplateQuery)
     @blp.response(schemas.EmailTemplateListSchema)
-    def get(self, **kwargs: Any) -> Dict[str, List[EmailTemplate]]:
+    def get(self) -> Dict[str, List[EmailTemplate]]:
         # pylint: disable=unused-argument
         """
         获取所有电子邮件模板选项信息
@@ -66,7 +70,7 @@ class EmailTemplateView(MethodView):
     @blp.arguments(GeneralParam, location="query", as_kwargs=True)
     @blp.response(schemas.EmailTemplatePageSchema)
     @paginate()
-    def get(self, **kwargs: Dict[str, Any]) -> BaseQuery:
+    def get(self, **kwargs: Dict[str, Any]) -> "BaseQuery[EmailTemplate]":
         # pylint: disable=unused-argument
         """
         获取所有电子邮件模板信息——分页
@@ -88,6 +92,7 @@ class EmailTemplateView(MethodView):
         """
         email_template.save()
         logger.info(f"{current_user.username}新增了电子邮件模板{email_template}")
+        db.session.commit()
 
         return {"data": email_template}
 
@@ -102,9 +107,9 @@ class EmailTemplateView(MethodView):
         -------------------------------
         :param lst: list 包含id列表的字典
         """
-
-        models.EmailTemplate.delete_by_ids(lst["lst"])
+        models.EmailTemplate.destroy(*lst["lst"])
         logger.info(f"{current_user.username}删除了电子邮件模板{lst}")
+        db.session.commit()
 
 
 @blp.route(
@@ -117,17 +122,15 @@ class EmailTemplateItemView(MethodView):
     @blp.arguments(schemas.EmailTemplateSchema)
     @blp.response(schemas.EmailTemplateItemSchema)
     def put(
-        self, email_template: EmailTemplate, email_template_id: int, **kwargs: Any
+        self, email_template: EmailTemplate, email_template_id: int
     ) -> Dict[str, EmailTemplate]:
         # pylint: disable=unused-argument
         """
         更新电子邮件模板
         """
-
-        email_template = models.EmailTemplate.update_by_id(
-            email_template_id, schemas.EmailTemplateSchema, email_template
-        )
-        logger.info(f"{current_user.username}更新了电子邮件模板{email_template.id}")
+        samanager.pk_with(EmailTemplate, email_template_id)
+        email_template = samanager.update_with(email_template)
+        db.session.commit()
 
         return {"data": email_template}
 
@@ -139,8 +142,9 @@ class EmailTemplateItemView(MethodView):
         """
         删除电子邮件模板
         """
-        models.EmailTemplate.delete_by_id(email_template_id)
+        models.EmailTemplate.destroy(email_template_id)
         logger.info(f"{current_user.username}删除了电子邮件模板{email_template_id}")
+        db.session.commit()
 
     @doc_login_required
     @permission_required(PERMISSIONS.EmailTemplateQuery)
@@ -150,6 +154,6 @@ class EmailTemplateItemView(MethodView):
         """
         获取单条电子邮件模板
         """
-        email_template = models.EmailTemplate.get_by_id(email_template_id)
+        email_template = models.EmailTemplate.find_or_fail(email_template_id)
 
         return {"data": email_template}

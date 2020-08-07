@@ -31,6 +31,12 @@ class PaginationParametersSchema(ma.Schema):
     )
 
 
+def _url_for_page(page: int, per_page: int, **kwargs: Any) -> str:
+    if request.endpoint:
+        return url_for(request.endpoint, page=page, per_page=per_page)
+    return ""
+
+
 def generate_links(p: Pagination, per_page: int, **kwargs: Any) -> Dict[str, Any]:
     """生成分页相关信息
 
@@ -41,15 +47,11 @@ def generate_links(p: Pagination, per_page: int, **kwargs: Any) -> Dict[str, Any
     """
     links = {}
     if p.has_next:
-        links["next"] = url_for(
-            request.endpoint, page=p.next_num, per_page=per_page, **kwargs
-        )
+        links["next"] = _url_for_page(page=p.next_num, per_page=per_page, **kwargs)
     if p.has_prev:
-        links["prev"] = url_for(
-            request.endpoint, page=p.prev_num, per_page=per_page, **kwargs
-        )
-    links["first"] = url_for(request.endpoint, page=1, per_page=per_page, **kwargs)
-    links["last"] = url_for(request.endpoint, page=p.pages, per_page=per_page, **kwargs)
+        links["prev"] = _url_for_page(page=p.prev_num, per_page=per_page, **kwargs)
+    links["first"] = _url_for_page(page=1, per_page=per_page, **kwargs)
+    links["last"] = _url_for_page(page=p.pages, per_page=per_page, **kwargs)
 
     return links
 

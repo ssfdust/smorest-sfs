@@ -2,38 +2,33 @@
 # -*- coding: utf-8 -*-
 from typing import Any, Dict, List, Union
 
-import pytest
-
-from smorest_sfs.modules.roles.models import ROLES, Role
-from tests._utils.helpers import param_helper
-from tests._utils.injection import GeneralModify
+from smorest_sfs.modules.roles.models import Role
+from tests._utils.launcher import ModifyLauncher
 
 
-class TestRoleModify(GeneralModify):
-    items = "role_items"
+class TestRoleModify(ModifyLauncher):
+    items = "roles"
     view = "Role.RoleView"
     item_view = "Role.RoleItemView"
-    login_roles = [ROLES.RoleManager]
+    login_roles = ["RoleManager"]
     model = Role
-    schema = "RoleSchema"
-    delete_param_key = "role_id"
+    edit_param_key = "role_id"
 
     fixture_names = (
         "flask_app_client",
         "flask_app",
         "regular_user",
         "db",
-        "role_items",
+        "roles",
     )
 
-    @pytest.mark.parametrize("json", param_helper(name="role", description="desc"))
     def test_add(
         self,
-        json: Dict[str, Union[str, List[Dict[str, Union[str, int]]]]],
+        role_args: Dict[str, Union[str, List[Dict[str, Union[str, int]]]]],
         permissions: List[Dict[str, Union[int, str]]],
     ) -> None:
-        json["permissions"] = permissions
-        data = self._add_request(json)
+        role_args["permissions"] = permissions
+        data = self._add_request(role_args)
         assert data.keys() >= {"id", "name", "permissions"} and data["permissions"][
             0
         ].keys() == {"id", "name"}
@@ -42,9 +37,12 @@ class TestRoleModify(GeneralModify):
         self._delete_request()
 
     def test_item_modify(self, update_permissions: List[Dict[str, Any]]) -> None:
-        json = self._get_dumped_modified_item()
+        from smorest_sfs.modules.roles.schemas import RoleSchema
+
+        item = self._get_modified_item()
+        json = RoleSchema().dump(item)
         json.update(
-            {"name": "tt", "description": "qaqa", "permissions": update_permissions,}
+            {"name": "tt", "description": "qaqa", "permissions": update_permissions}
         )
         data = self._item_modify_request(json)
         assert (

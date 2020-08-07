@@ -14,7 +14,11 @@ spec:
   selector:
     matchLabels:
       io.kompose.service: rabbitmq
-  strategy: {}
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
   template:
     metadata:
       annotations:
@@ -27,22 +31,33 @@ spec:
     spec:
       containers:
       - env:
-        - name: RABBITMQ_DEFAULT_PASS
+        - name: RABBITMQ_PASSWORD
           value: admin
-        - name: RABBITMQ_DEFAULT_USER
+        - name: RABBITMQ_ULIMIT_NOFILES
+          value: "128"
+        - name: RABBITMQ_USERNAME
           value: admin
-        - name: RABBITMQ_DEFAULT_VHOST
+        - name: RABBITMQ_VHOST
           value: smorest
-        - name: VIRTUAL_HOST
-          value: rabbitmq.local
-        image: rabbitmq:3.8.3-management-alpine
+        image: bitnami/rabbitmq:latest
         imagePullPolicy: ""
         name: rabbitmq
         ports:
-        - containerPort: 15672
         - containerPort: 5672
         resources: {}
+        volumeMounts:
+          - mountPath: /bitnami
+            name: rabbit-persistent-storage
       restartPolicy: Always
       serviceAccountName: ""
-      volumes: null
-status: {}
+      dnsPolicy: ClusterFirst
+      volumeMounts:
+        - mountPath: /bitnami
+          name: rabbit-persistent-storage
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: rabbit-persistent-storage
+          hostPath:
+            path:  /tmp/rabbit
+            type: Directory

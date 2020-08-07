@@ -30,9 +30,6 @@ class Log(Model, SurrogatePK):
         db.TEXT, nullable=False, doc="日志消息", info={"marshmallow": {"dump_only": True}}
     )
 
-    def __repr__(self) -> str:
-        return self.message[:20]
-
 
 class ResponseLog(Model, SurrogatePK):
     """
@@ -46,12 +43,11 @@ class ResponseLog(Model, SurrogatePK):
     :attr status_code: int 状态码
     """
 
+    __tablename__ = "response_logs"
+
     url = db.Column(db.String(4096), nullable=False, doc="请求url")
     arguments = db.Column(JSONType, doc="请求数据")
     method = db.Column(db.String(10), nullable=False, doc="请求方法")
     ip = db.Column(db.String(128), doc="IP地址")
     module = db.Column(db.String(128), doc="模块名")
     status_code = db.Column(db.Integer, doc="状态码")
-
-    def __repr__(self) -> str:
-        return "{} {}".format(self.method, self.url[0:20])

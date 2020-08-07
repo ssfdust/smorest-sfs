@@ -109,3 +109,20 @@ class BaseTimeParam(Schema):
             except KeyError:
                 continue
         return data
+
+
+class IdNameSchema(Schema):
+
+    id_ = fields.Int(data_key="id", dump_only=True)
+    name = fields.Str()
+
+
+class IdFiledSchema(Schema):
+
+    id_ = fields.Int(data_key="id", dump_only=True)
+
+
+class WritableIdNameSchema(Schema):
+
+    id_ = fields.Int(data_key="id")
+    name = fields.Str()

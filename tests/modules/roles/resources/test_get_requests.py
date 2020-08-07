@@ -4,17 +4,16 @@ from typing import Dict
 
 import pytest
 
-from smorest_sfs.modules.auth import ROLES
-from tests._utils.injection import GeneralGet
+from tests._utils.launcher import AccessLauncher
 
 
-class TestListView(GeneralGet):
+class TestListView(AccessLauncher):
 
     fixture_names = ("flask_app_client", "flask_app", "regular_user", "test_role")
     item_view = "Role.RoleItemView"
     listview = "Role.RoleListView"
     view = "Role.RoleView"
-    login_roles = [ROLES.RoleManager]
+    login_roles = ["RoleManager"]
 
     def test_get_options(self) -> None:
         self._get_options()

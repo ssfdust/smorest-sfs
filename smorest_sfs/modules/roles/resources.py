@@ -28,6 +28,7 @@ from flask_jwt_extended import current_user
 from flask_sqlalchemy import BaseQuery
 from loguru import logger
 
+from smorest_sfs.extensions import db
 from smorest_sfs.extensions.api.decorators import paginate
 from smorest_sfs.extensions.marshal.bases import (
     BaseIntListSchema,
@@ -36,8 +37,11 @@ from smorest_sfs.extensions.marshal.bases import (
 )
 from smorest_sfs.modules.auth import PERMISSIONS
 from smorest_sfs.modules.auth.decorators import doc_login_required, permission_required
+from smorest_sfs.plugins.samanager import SqlaManager
 
 from . import blp, models, schemas
+
+samanager: SqlaManager[models.Role] = SqlaManager(db.session)
 
 
 @blp.route("/options")
@@ -63,7 +67,7 @@ class RoleView(MethodView):
     @blp.arguments(GeneralParam, location="query", as_kwargs=True)
     @blp.response(schemas.RolePageSchema)
     @paginate()
-    def get(self, **kwargs: Dict[str, Any]) -> BaseQuery:
+    def get(self, **kwargs: Dict[str, Any]) -> "BaseQuery[models.Role]":
         # pylint: disable=unused-argument
         """
         获取所有角色权限信息——分页
@@ -83,6 +87,7 @@ class RoleView(MethodView):
         """
         role.save()
         logger.info(f"{current_user.username}新增了角色权限{role}")
+        db.session.commit()
 
         return {"data": role}
 
@@ -97,9 +102,9 @@ class RoleView(MethodView):
         -------------------------------
         :param lst: list 包含id列表的字典
         """
-
-        models.Role.delete_by_ids(lst)
+        models.Role.destroy(*lst)
         logger.info(f"{current_user.username}删除了角色权限{lst}")
+        db.session.commit()
 
 
 @blp.route(
@@ -115,9 +120,10 @@ class RoleItemView(MethodView):
         """
         更新角色权限
         """
-
-        role = models.Role.update_by_id(role_id, schemas.RoleSchema, role)
-        logger.info(f"{current_user.username}更新了角色权限{role.id}")
+        samanager.pk_with(models.Role, role_id)
+        role = samanager.update_with(role)
+        logger.info(f"{current_user.username}更新了角色权限{role.id_}")
+        db.session.commit()
 
         return {"data": role}
 
@@ -128,8 +134,9 @@ class RoleItemView(MethodView):
         """
         删除角色权限
         """
-        models.Role.delete_by_id(role_id)
+        models.Role.destroy(role_id)
         logger.info(f"{current_user.username}删除了角色权限{role_id}")
+        db.session.commit()
 
     @doc_login_required
     @permission_required(PERMISSIONS.RoleQuery)
@@ -139,6 +146,6 @@ class RoleItemView(MethodView):
         """
         获取单条角色权限
         """
-        role = models.Role.get_by_id(role_id)
+        role = models.Role.find_or_fail(role_id)
 
         return {"data": role}

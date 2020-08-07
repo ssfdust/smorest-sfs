@@ -14,9 +14,10 @@
 # limitations under the License.
 
 import pkgutil
+from typing import Any, Dict
 
 
-def import_submodules(context: dict, root_module: str, path: str) -> None:
+def import_submodules(context: Dict[str, Any], root_module: str, path: str) -> None:
     """
     加载文件夹下的所有子模块
     https://github.com/getsentry/zeus/blob/97528038a0abfd6f0e300d8d3f276e1b0818c328/zeus/utils/imports.py#L23

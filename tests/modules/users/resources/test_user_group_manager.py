@@ -8,14 +8,14 @@ from smorest_sfs.modules.auth import ROLES
 from smorest_sfs.modules.groups.models import Group
 from smorest_sfs.modules.roles.models import Role
 from smorest_sfs.modules.users.models import User
-from tests._utils.injection import GeneralModify
+from tests._utils.launcher import ModifyLauncher
 
 
 def get_roles(res: Dict[str, Any]) -> Set[str]:
     return set(role["name"] for role in res["roles"])
 
 
-class TestUserGroupManager(GeneralModify):
+class TestUserGroupManager(ModifyLauncher):
     fake_roles: List[Role]
     fake_groups: List[Group]
     fake_users: List[User]
@@ -28,29 +28,28 @@ class TestUserGroupManager(GeneralModify):
         "fake_groups",
         "fake_users",
     )
-    schema = "UserSchema"
     item_view = "User.UserItemView"
     login_roles = [ROLES.UserManager]
-    delete_param_key = "user_id"
+    edit_param_key = "user_id"
     data = {
         "phonenum": "12121212",
         "username": "fake_1",
         "email": "66666",
         "confirmed_at": "2020-05-06 00:00:00",
         "active": True,
-        "userinfo": {"first_name": "tt", "last_name": "qaqa", "sex": 2, "age": 13,},
+        "userinfo": {"first_name": "tt", "last_name": "qaqa", "sex": 2, "age": 13},
     }
 
     def _modify_user_groups(self, indexlst: List[int], roles: Set[str]) -> User:
         item = self._get_modified_item()
         print(item.roles)
         groups = [
-            {"id": self.fake_groups[index].id, "name": self.fake_groups[index].name}
+            {"id": self.fake_groups[index].id_, "name": self.fake_groups[index].name}
             for index in indexlst
         ]
         data = self.data.copy()
-        data["groups"] = groups  # type: ignore
-        data["roles"] = [{"id": r.id, "name": r.name} for r in item.roles]
+        data["groups"] = groups
+        data["roles"] = [{"id": r.id_, "name": r.name} for r in item.roles]
         res = self._item_modify_request(data)
         assert get_roles(res) == roles
         return item

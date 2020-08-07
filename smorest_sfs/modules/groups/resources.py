@@ -11,13 +11,17 @@ from flask_jwt_extended import current_user
 from flask_sqlalchemy import BaseQuery
 from loguru import logger
 
+from smorest_sfs.extensions import db
 from smorest_sfs.extensions.api.decorators import paginate
 from smorest_sfs.extensions.marshal.bases import BaseMsgSchema, GeneralParam
 from smorest_sfs.modules.auth import PERMISSIONS
 from smorest_sfs.modules.auth.decorators import doc_login_required, permission_required
+from smorest_sfs.plugins.samanager import SqlaManager
 from smorest_sfs.services.groups import parse_group_change, parse_group_users_change
 
 from . import blp, models, schemas
+
+samanager: SqlaManager[models.Group] = SqlaManager(db.session)
 
 
 @blp.route("/options")
@@ -44,7 +48,7 @@ class GroupView(MethodView):
     @blp.arguments(GeneralParam, location="query", as_kwargs=True)
     @blp.response(schemas.GroupPageSchema)
     @paginate()
-    def get(self, **kwargs: Dict[str, Any]) -> BaseQuery:
+    def get(self, **kwargs: Dict[str, Any]) -> "BaseQuery[models.Group]":
         # pylint: disable=unused-argument
         """
         获取所有用户组信息——分页
@@ -64,6 +68,7 @@ class GroupView(MethodView):
         """
         group.save()
         logger.info(f"{current_user.username}新增了用户组{group}")
+        db.session.commit()
 
         return {"data": group}
 
@@ -82,12 +87,11 @@ class GroupItemView(MethodView):
         更新用户组
         """
 
-        group = models.Group.update_by_id(
-            group_id, schemas.GroupSchema, group, commit=False
-        )
+        samanager.pk_with(models.Group, group_id)
+        group = samanager.update_with(group, commit=False)
         parse_group_change(group)
-        logger.info(f"{current_user.username}更新了用户组{group.id}")
-        models.db.session.commit()
+        db.session.commit()
+        logger.info(f"{current_user.username}更新了用户组{group.id_}")
 
         return {"data": group}
 
@@ -98,11 +102,12 @@ class GroupItemView(MethodView):
         """
         删除用户组
         """
-        group = models.Group.get_by_id(group_id)
+        group = models.Group.find_or_fail(group_id)
         group.roles = []
         parse_group_change(group)
         group.users = []
         group.delete()
+        db.session.commit()
         logger.info(f"{current_user.username}删除了用户组{group_id}")
 
     @doc_login_required
@@ -113,7 +118,7 @@ class GroupItemView(MethodView):
         """
         获取单条用户组
         """
-        group = models.Group.get_by_id(group_id)
+        group = models.Group.find_or_fail(group_id)
 
         return {"data": group}
 
@@ -131,11 +136,10 @@ class GroupUserView(MethodView):
         """
         更新用户组成员
         """
-        group = models.Group.update_by_id(
-            group_id, schemas.GroupUserSchema, group, commit=False
-        )
+        samanager.pk_with(models.Group, group_id)
+        group = samanager.update_with(group, schemas.GroupUserSchema, commit=False)
         parse_group_users_change(group)
-        logger.info(f"{current_user.username}更新了用户组{group.id}")
-        models.db.session.commit()
+        db.session.commit()
+        logger.info(f"{current_user.username}更新了用户组{group.id_}")
 
         return {"data": group}

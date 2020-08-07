@@ -1,20 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from smorest_sfs.modules.auth import ROLES
-from smorest_sfs.modules.groups.models import Group
-from tests._utils.injection import GeneralModify
+from tests._utils.launcher import ModifyLauncher
 
 
-class TestGroupModify(GeneralModify):
-    items = "group_items"
+class TestGroupModify(ModifyLauncher):
+    items = "groups"
     fixture_names = ("flask_app_client", "flask_app", "regular_user", "db",) + (items,)
     view = "Group.GroupView"
     item_view = "Group.GroupItemView"
-    login_roles = [ROLES.GroupManager]
-    model = Group
-    delete_param_key = "group_id"
-    schema = "GroupSchema"
+    login_roles = ["GroupManager"]
+    edit_param_key = "group_id"
 
     def test_add(self) -> None:
         json = {
@@ -28,9 +24,19 @@ class TestGroupModify(GeneralModify):
 
     def test_item_modify(self) -> None:
         data = self._item_modify_request(
-            json={"name": "renamed", "description": "renamed", "default": True, "roles": []}
+            json={
+                "name": "renamed",
+                "description": "renamed",
+                "default": True,
+                "roles": [],
+            }
         )
-        assert data["name"] == "renamed" and data["description"] == "renamed" and data["default"] == True and data["roles"] == []
+        assert (
+            data["name"] == "renamed"
+            and data["description"] == "renamed"
+            and data["default"] is True
+            and data["roles"] == []
+        )
 
     def test_item_delete(self) -> None:
         self._item_delete_request()

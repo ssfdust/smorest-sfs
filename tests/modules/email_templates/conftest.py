@@ -1,31 +1,14 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-from typing import Any, Callable, Iterator, Tuple, Type
+from typing import Dict
 
 import pytest
 from flask import Flask
-from marshmallow import Schema
-
-from smorest_sfs.modules.email_templates.models import EmailTemplate
+from mixer.backend.marshmallow import NestedMixer
 
 
 @pytest.fixture
-def email_template_items(
-    flask_app: Flask, temp_db_instance_helper: Callable[..., Iterator[Any]],
-) -> Iterator[Tuple[EmailTemplate, EmailTemplate, EmailTemplate]]:
-    # pylint: disable=W0613
-    for _ in temp_db_instance_helper(
-        *(
-            EmailTemplate(name=str(_) + "_test_name", template="template")
-            for _ in range(3)
-        )
-    ):
-        yield _
-
-
-@pytest.fixture
-def EmailTemplateSchema(flask_app: Flask) -> Type[Schema]:
-    # pylint: disable=W0621, W0613
+def email_template_args(flask_app: Flask, nested_mixer: NestedMixer) -> Dict[str, str]:
     from smorest_sfs.modules.email_templates.schemas import EmailTemplateSchema
 
-    return EmailTemplateSchema
+    data: Dict[str, str] = nested_mixer.blend(EmailTemplateSchema)
+
+    return data
