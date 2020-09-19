@@ -13,6 +13,7 @@ def fake_codes(flask_app: Flask, db: SQLAlchemy) -> Iterator[None]:
     from smorest_sfs.modules.codes.models import Code
     from smorest_sfs.services.codes import import_codes_from_dir
 
+    db.session.execute("TRUNCATE TABLE {} RESTART IDENTITY".format(Code.__tablename__))
     import_codes_from_dir("tests/data/codes/")
     yield
     db.session.execute("TRUNCATE TABLE {} RESTART IDENTITY".format(Code.__tablename__))

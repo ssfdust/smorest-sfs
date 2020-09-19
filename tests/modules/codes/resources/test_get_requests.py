@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from tests._utils.launcher import AccessLauncher
+from tests._utils.helpers import parse_dict
 
 
 class TestListView(AccessLauncher):
@@ -11,16 +12,13 @@ class TestListView(AccessLauncher):
     login_roles = ["CodeManager"]
 
     def test_get_options(self) -> None:
-        assert self._get_options(type_code="test-002") == [
-            {"id": 4, "name": "A001"},
-            {"id": 5, "name": "B001", "children": [{"id": 7, "name": "B010"}]},
+        data = self._get_options(type_code="test-002")
+        parsed_data = parse_dict(data)
+        assert parsed_data == [
+            {"name": "A001"},
+            {"name": "B001", "children": [{"name": "B010"}]},
             {
-                "id": 6,
                 "name": "C001",
-                "children": [
-                    {"id": 8, "name": "C010"},
-                    {"id": 9, "name": "C011"},
-                    {"id": 10, "name": "C100"},
-                ],
+                "children": [{"name": "C010"}, {"name": "C011"}, {"name": "C100"}],
             },
         ]
