@@ -93,9 +93,12 @@ class TestUserModify(ModifyLauncher):
                     email=self.regular_user.email,
                     phonenum="2345",
                 )
-                client.patch(url, json=data)
+                for k in ["username", "active", "confirmed_at"]:
+                    data.pop(k)
+                resp = client.patch(url, json=data)
                 assert (
-                    self.regular_user.phonenum == "2345"
+                    resp.status_code == 200
+                    and self.regular_user.phonenum == "2345"
                     and self.regular_user.username != "asasarqwrasdasd"
                 )
 
@@ -109,6 +112,7 @@ class TestUserModify(ModifyLauncher):
                     phonenum="9527",
                     roles=[{"id": r.id_, "name": r.name} for r in self.roles],
                 )
+                data.pop("password")
                 resp = client.put(url, json=data)
                 assert (
                     resp.status_code == 200

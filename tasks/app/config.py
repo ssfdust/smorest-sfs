@@ -22,6 +22,8 @@ except ImportError as e:
     sys.exit(1)
 
 SETTING_KEYS = {
+    "API_TITLE",
+    "API_VERSION",
     "MODULE_BASE_PREFIX",
     "SQLALCHEMY_DATABASE_URI",
     "CELERY_BROKER_URL",
@@ -39,6 +41,8 @@ SETTING_KEYS = {
 RANDOM_KEYS = {"JWT_SECRET_KEY"}
 
 HELPS = {
+    "API_TITLE": "doc中的API标题",
+    "API_VERSION": "doc中的API版本",
     "SQLALCHEMY_DATABASE_URI": "Postgresql数据库连接地址(SQLAlchemy地址)",
     "BABEL_DEFAULT_LOCALE": "本地化字符串",
     "MODULE_BASE_PREFIX": "url默认前缀",
@@ -68,6 +72,8 @@ def rand_string(strlen=10):
 class _Config:
 
     default_config = {
+        "API_TITLE": "Smorest-SFS",
+        "API_VERSION": "v1",
         "SQLALCHEMY_DATABASE_URI": "postgresql://root:root@localhost/mydb",
         "BABEL_DEFAULT_LOCALE": "zh_cn",
         "MODULE_BASE_PREFIX": "/api/v1",
@@ -139,10 +145,11 @@ class _Config:
 
 class _ConfigLoader:
     def load_configurations(self):
-        for config_type, config in self.config_types:
+        for config_type, config in self.config_types.items():
             if not config:
-                config = toml.load(CONFIG_PATH.format(config_type))
+                config = toml.load(CONFIG_PATH.format(config=config_type))
                 self._parse_config(config)
+                setattr(self, f"{config_type}_config", config)
         return self
 
     @staticmethod

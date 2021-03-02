@@ -2,55 +2,83 @@ version: '3.5'
 
 services:  
 
-  rabbit:
-    image: rabbitmq:latest
-    environment:
-      RABBITMQ_DEFAULT_USER: {{ mq_user }}
-      RABBITMQ_DEFAULT_PASS: {{ mq_passwd }}
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:15672"]
-      interval: 10s
-      timeout: 10s
-      retries: 5
-      start_period: 40s
+    rabbitmq:
+        image:  bitnami/rabbitmq:latest
+        expose: 
+            - "5672"
+        environment:
+            RABBITMQ_DEFAULT_USER: {{ BROKER_URL_INFO['username'] }}
+            RABBITMQ_DEFAULT_PASS: {{ BROKER_URL_INFO['password'] }}
+            RABBITMQ_VHOST: smorest
+            RABBITMQ_ULIMIT_NOFILES: 128
 
-  db:
-    image: ssfdust/psql_jieba_swsc:latest
-    ports:
-      - "9432:5432"
-    environment:
-      POSTGRES_USER: {{ '${POSTGRES_USER:-' + db_username + '}' }}
-      POSTGRES_PASSWORD: {{ '${POSTGRES_PASSWORD:-' + db_password + '}' }}
-      POSTGRES_DB: {{ '${POSTGRES_DB:-' + db_name + '}' }}
-      PGDATA: /data/postgres
+    redis:
+        image: redis:5.0.9-alpine
+        expose:
+            - "6379"
+        command: redis-server
 
-  web:
-    image: ssfdust/full-stack-flask-smorest:latest
-    volumes:
-      - .:/Application 
-    ports:
-      - "9001:5000"
-    restart: on-failure
-    depends_on:
-      - rabbit
-      - db
+    db:
+        image: ssfdust/psql_jieba_swsc:latest
+        expose:
+            - "5432"
+        environment:
+            POSTGRES_USER: {{ '${POSTGRES_USER:-' + DB_URL_INFO['username'] + '}' }}
+            POSTGRES_PASSWORD: {{ '${POSTGRES_PASSWORD:-' + DB_URL_INFO['password'] + '}' }}
+            POSTGRES_DB: {{ '${POSTGRES_DB:-' + DB_URL_INFO['database'] + '}' }}
+            PGDATA: /data/postgres
 
-  worker:
-    image: ssfdust/full-stack-flask-smorest:latest
-    command: inv app.celery
-    restart: on-failure
-    volumes:
-      - .:/Application
-    depends_on:
-      - rabbit
-      - db
+    nginx:
+        image: nginx:stable-alpine
+        ports:
+            - "8083:8083"
+        volumes:
+            - ./deploy/nginx/flask.conf:/etc/nginx/conf.d/default.conf:ro
+        depends_on:
+            - pgadmin
+            - rabbitmq
+            - web
 
-  beat:
-    image: ssfdust/full-stack-flask-smorest:latest
-    command: inv app.celery.beat
-    restart: on-failure
-    volumes:
-      - .:/Application
-    depends_on:
-      - rabbit
-      - db
+    web:
+        image: ssfdust/smorest-sfs
+        volumes:
+            - .:/Application 
+        restart: on-failure
+        expose: 
+            - "8000"
+        depends_on:
+            - db
+            - rabbitmq
+            - redis
+        environment:
+            - VIRTUAL_HOST=smorest.local
+            - WEB_CONCURRENCY=2
+
+    beat:
+        image: ssfdust/smorest-sfs
+        volumes:
+            - .:/Application 
+        depends_on:
+            - web
+        environment:
+            APP: beat
+
+    celery:
+        image: ssfdust/smorest-sfs
+        volumes:
+            - .:/Application 
+        depends_on:
+            - web
+        environment:
+            APP: celery
+
+    pgadmin:
+        image: dpage/pgadmin4
+        ports:
+            - "8084:8084"
+        expose: 
+            - "80"
+        environment:
+            - PGADMIN_LISTEN_PORT=8084
+            - PGADMIN_DEFAULT_EMAIL=admin@mail.com
+            - PGADMIN_DEFAULT_PASSWORD=admin

@@ -28,7 +28,7 @@ class TestApi(FixturesInjectBase):
         TestPageSchema = self.TestPageSchema
 
         class Pets(MethodView):  # pylint: disable=W0612
-            @blp.response(TestPageSchema)
+            @blp.response(200, TestPageSchema)
             @paginate()
             def get(self) -> "BaseQuery[Model]":
                 """List pets"""

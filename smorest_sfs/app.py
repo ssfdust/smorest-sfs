@@ -17,6 +17,7 @@ ENABLED_MODULES = [
     "codes",
     "menus",
     "logs",
+    "projects",
 ]
 
 

@@ -5,6 +5,22 @@
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {{ module_title }}模块
 """
+
+from typing import Dict
 from flask_smorest import Blueprint
 
-blp = Blueprint('{{ model_name }}', __name__, url_prefix='/{{ module_name }}', description='{{ module_title }}模块')
+blp = Blueprint(
+    "{{ model_name }}",
+    __name__,
+    url_prefix="/{{ module_name }}",
+    description="{{ module_title }}模块",
+)
+
+ma_mapping: Dict[str, str] = dict(
+    [
+        (
+            "smorest_sfs.modules.{{ module_name }}.models.{{ model_name }}",
+            "smorest_sfs.modules.{{ module_name }}.schemas.{{ model_name }}Schema",
+        )
+    ]
+)

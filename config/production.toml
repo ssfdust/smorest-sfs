@@ -1,3 +1,6 @@
+API_TITLE = 'Smorest-SFS'
+API_VERSION = 'v1'
+
 OPENAPI_VERSION = '3.0.2'
 OPENAPI_REDOC_PATH = 'redoc'
 OPENAPI_REDOC_URL = "https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js"
@@ -6,12 +9,12 @@ OPENAPI_SWAGGER_UI_URL = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
 OPENAPI_URL_PREFIX = 'doc'
 MODULE_BASE_PREFIX = '/api/v1'
 
-REDIS_URL = "redis://redis/0"
-
-SQLALCHEMY_DATABASE_URI = 'postgresql://smorest-admin:smorest2019@db/smorest-production'
+SQLALCHEMY_DATABASE_URI = 'postgresql://smorest-admin:smorest2021@db/smorest-production'
 SQLALCHEMY_TRACK_MODIFICATIONS = false
 
-JWT_SECRET_KEY = '8TI8/KpMArmw9ZVtrXA&amp;=7w\&amp;I$wbX'
+REDIS_URL = 'redis://redis/0'
+
+JWT_SECRET_KEY = '&#34;$)&gt;96ZE`-R*!X?E+wVvUA7@tNBMXu'
 JWT_BLACKLIST_ENABLED = true
 JWT_BLACKLIST_TOKEN_CHECKS = ['access', 'refresh']
 JWT_TOKEN_LOCATION = ['headers', 'query_string']

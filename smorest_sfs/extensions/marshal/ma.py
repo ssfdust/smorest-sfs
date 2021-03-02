@@ -90,8 +90,4 @@ class Marshmallow(BaseMarshmallow):
     def __init__(self, app: Optional[Flask] = None):
         super().__init__(app)
         self.SQLAlchemyAutoSchema = SQLAlchemyAutoSchema
-
-    def init_app(self, app: Flask) -> None:
-        super().init_app(app)
-        SQLAlchemySchemaOpts.session = self.ModelSchema.OPTIONS_CLASS.session
-        SQLAlchemyAutoSchemaOpts.session = self.ModelSchema.OPTIONS_CLASS.session
+        self.SQLAlchemySchema = SQLAlchemySchema

@@ -44,6 +44,7 @@ class TestRoleModify(ModifyLauncher):
         json.update(
             {"name": "tt", "description": "qaqa", "permissions": update_permissions}
         )
+        json.pop("id")
         data = self._item_modify_request(json)
         assert (
             data["name"] == "tt"

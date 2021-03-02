@@ -1,3 +1,6 @@
+API_TITLE = '{{ API_TITLE }}'
+API_VERSION = '{{ API_VERSION }}'
+
 OPENAPI_VERSION = '3.0.2'
 OPENAPI_REDOC_PATH = 'redoc'
 OPENAPI_REDOC_URL = "https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js"

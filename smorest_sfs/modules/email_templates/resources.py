@@ -50,13 +50,13 @@ samanager: SqlaManager[EmailTemplate] = SqlaManager(db.session)
 class EmailTemplateListView(MethodView):
     @doc_login_required
     @permission_required(PERMISSIONS.EmailTemplateQuery)
-    @blp.response(schemas.EmailTemplateListSchema)
+    @blp.response(200, schemas.EmailTemplateListSchema)
     def get(self) -> Dict[str, List[EmailTemplate]]:
         # pylint: disable=unused-argument
         """
         获取所有电子邮件模板选项信息
         """
-        query = models.EmailTemplate.query
+        query = EmailTemplate.query
 
         items = query.all()
 
@@ -68,21 +68,21 @@ class EmailTemplateView(MethodView):
     @doc_login_required
     @permission_required(PERMISSIONS.EmailTemplateQuery)
     @blp.arguments(GeneralParam, location="query", as_kwargs=True)
-    @blp.response(schemas.EmailTemplatePageSchema)
+    @blp.response(200, schemas.EmailTemplatePageSchema)
     @paginate()
     def get(self, **kwargs: Dict[str, Any]) -> "BaseQuery[EmailTemplate]":
         # pylint: disable=unused-argument
         """
         获取所有电子邮件模板信息——分页
         """
-        query = models.EmailTemplate.where(**kwargs)
+        query = EmailTemplate.where(**kwargs)
 
         return query
 
     @doc_login_required
     @permission_required(PERMISSIONS.EmailTemplateAdd)
     @blp.arguments(schemas.EmailTemplateSchema)
-    @blp.response(schemas.EmailTemplateItemSchema)
+    @blp.response(200, schemas.EmailTemplateItemSchema)
     def post(
         self, email_template: EmailTemplate, **kwargs: Any
     ) -> Dict[str, EmailTemplate]:
@@ -99,7 +99,7 @@ class EmailTemplateView(MethodView):
     @doc_login_required
     @permission_required(PERMISSIONS.EmailTemplateDelete)
     @blp.arguments(BaseIntListSchema, as_kwargs=False)
-    @blp.response(BaseMsgSchema)
+    @blp.response(200, BaseMsgSchema)
     def delete(self, lst: Dict[str, List[int]], **kwargs: Any) -> None:
         # pylint: disable=unused-argument
         """
@@ -120,7 +120,7 @@ class EmailTemplateItemView(MethodView):
     @doc_login_required
     @permission_required(PERMISSIONS.EmailTemplateEdit)
     @blp.arguments(schemas.EmailTemplateSchema)
-    @blp.response(schemas.EmailTemplateItemSchema)
+    @blp.response(200, schemas.EmailTemplateItemSchema)
     def put(
         self, email_template: EmailTemplate, email_template_id: int
     ) -> Dict[str, EmailTemplate]:
@@ -136,7 +136,7 @@ class EmailTemplateItemView(MethodView):
 
     @doc_login_required
     @permission_required(PERMISSIONS.EmailTemplateDelete)
-    @blp.response(BaseMsgSchema)
+    @blp.response(200, BaseMsgSchema)
     def delete(self, email_template_id: int, **kwargs: Any) -> None:
         # pylint: disable=unused-argument
         """
@@ -148,7 +148,7 @@ class EmailTemplateItemView(MethodView):
 
     @doc_login_required
     @permission_required(PERMISSIONS.EmailTemplateQuery)
-    @blp.response(schemas.EmailTemplateItemSchema)
+    @blp.response(200, schemas.EmailTemplateItemSchema)
     def get(self, email_template_id: int, **kwargs: Any) -> Dict[str, EmailTemplate]:
         # pylint: disable=unused-argument
         """

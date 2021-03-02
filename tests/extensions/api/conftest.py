@@ -23,6 +23,8 @@ def init_flaskapp(db: SQLAlchemy) -> Flask:
     from smorest_sfs.extensions import babel
 
     flask_app = Flask("TestApi")
+    flask_app.config["API_TITLE"] = "TestApi"
+    flask_app.config["API_VERSION"] = "v1"
     flask_app.config["OPENAPI_VERSION"] = "3.0.2"
     flask_app.config["BABEL_DEFAULT_TIMEZONE"] = "Asia/Shanghai"
     flask_app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(

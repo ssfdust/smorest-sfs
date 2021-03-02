@@ -55,7 +55,6 @@ def generate_config(context):
         "module_name": "模块名称",
         "module_title": "模块标题（注释用）",
         "module_name_singular": "模块单例名",
-        "description": "模块描述",
     }
 )
 def crud_module(context, module_name="", module_name_singular="", module_title=""):
@@ -81,7 +80,7 @@ def crud_module(context, module_name="", module_name_singular="", module_title="
 
     log.info("模块 `%s` 创建成功.", module_name)
 
-    log.info("请在app/factory.py中的ENABLED_MODULES中添加新模块以激活。")
+    log.info("请在smorest_sfs/app.py中的ENABLED_MODULES中添加新模块以激活。")
 
 
 @task
@@ -141,6 +140,9 @@ def permissions_adder(context, model_name="", module_title=""):
 @task
 def generate_docker_compose(context):
     # pylint: disable=unused-argument
+    """
+    生成docker-compose文件
+    """
     from tasks.app.config import Config
     from tasks.app.renders import render_config_to_dockercompose
 

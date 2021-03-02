@@ -39,7 +39,7 @@ samanager: SqlaManager[models.User] = SqlaManager(db.session)
 class UserListView(MethodView):
     @doc_login_required
     @permission_required(PERMISSIONS.UserQuery)
-    @blp.response(schemas.UserListSchema)
+    @blp.response(200, schemas.UserListSchema)
     def get(self) -> Dict[str, List[models.User]]:
         # pylint: disable=unused-argument
         """
@@ -57,7 +57,7 @@ class UserView(MethodView):
     @doc_login_required
     @permission_required(PERMISSIONS.UserQuery)
     @blp.arguments(schemas.UserParam, location="query", as_kwargs=True)
-    @blp.response(schemas.UserPageSchema)
+    @blp.response(200, schemas.UserPageSchema)
     @paginate()
     def get(self, username: str) -> "BaseQuery[models.User]":
         # pylint: disable=unused-argument
@@ -82,7 +82,7 @@ class UserView(MethodView):
     @doc_login_required
     @permission_required(PERMISSIONS.UserDelete)
     @blp.arguments(BaseIntListSchema, as_kwargs=True)
-    @blp.response(BaseMsgSchema)
+    @blp.response(200, BaseMsgSchema)
     def delete(self, lst: List[int]) -> None:
         # pylint: disable=unused-argument
         """
@@ -108,7 +108,7 @@ class UserItemView(MethodView):
     @doc_login_required
     @permission_required(PERMISSIONS.UserEdit)
     @blp.arguments(schemas.UserSchema)
-    @blp.response(schemas.UserItemSchema)
+    @blp.response(200, schemas.UserItemSchema)
     def put(self, user: models.User, user_id: int) -> Dict[str, models.User]:
         """
         更新用户
@@ -124,7 +124,7 @@ class UserItemView(MethodView):
 
     @doc_login_required
     @permission_required(PERMISSIONS.UserDelete)
-    @blp.response(BaseMsgSchema)
+    @blp.response(200, BaseMsgSchema)
     def delete(self, user_id: int) -> None:
         """
         删除用户
@@ -139,7 +139,7 @@ class UserItemView(MethodView):
 
     @doc_login_required
     @permission_required(PERMISSIONS.UserQuery)
-    @blp.response(schemas.UserItemSchema)
+    @blp.response(200, schemas.UserItemSchema)
     def get(self, user_id: int) -> Dict[str, models.User]:
         """
         获取单条用户
@@ -152,7 +152,7 @@ class UserItemView(MethodView):
 @blp.route("/register")
 class UserRegisterView(MethodView):
     @blp.arguments(schemas.UserRegisterSchema)
-    @blp.response(schemas.UserItemSchema)
+    @blp.response(200, schemas.UserItemSchema)
     def put(self, user: models.User) -> Dict[str, models.User]:
         """
         注册用户
@@ -168,7 +168,7 @@ class UserRegisterView(MethodView):
 class UserSelfView(MethodView):
     @doc_login_required
     @role_required(ROLES.User)
-    @blp.response(schemas.UserItemSchema, description="用户信息")
+    @blp.response(200, schemas.UserItemSchema, description="用户信息")
     def get(self) -> Dict[str, LocalProxy]:
         """
         获取用户自己的信息
@@ -179,7 +179,7 @@ class UserSelfView(MethodView):
     @doc_login_required
     @role_required(ROLES.User)
     @blp.arguments(schemas.UserSelfSchema)
-    @blp.response(schemas.UserItemSchema, code=200, description="用户信息")
+    @blp.response(200, schemas.UserItemSchema, description="用户信息")
     def patch(self, user: models.User) -> Dict[str, models.User]:
         """
         更新用户信息

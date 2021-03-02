@@ -48,7 +48,7 @@ samanager: SqlaManager[models.Role] = SqlaManager(db.session)
 class RoleListView(MethodView):
     @doc_login_required
     @permission_required(PERMISSIONS.RoleQuery)
-    @blp.response(schemas.RoleListSchema)
+    @blp.response(200, schemas.RoleListSchema)
     def get(self) -> Dict[str, List[models.Role]]:
         """
         获取所有角色权限选项信息
@@ -65,7 +65,7 @@ class RoleView(MethodView):
     @doc_login_required
     @permission_required(PERMISSIONS.RoleQuery)
     @blp.arguments(GeneralParam, location="query", as_kwargs=True)
-    @blp.response(schemas.RolePageSchema)
+    @blp.response(200, schemas.RolePageSchema)
     @paginate()
     def get(self, **kwargs: Dict[str, Any]) -> "BaseQuery[models.Role]":
         # pylint: disable=unused-argument
@@ -79,7 +79,7 @@ class RoleView(MethodView):
     @doc_login_required
     @permission_required(PERMISSIONS.RoleAdd)
     @blp.arguments(schemas.RoleSchema)
-    @blp.response(schemas.RoleItemSchema)
+    @blp.response(200, schemas.RoleItemSchema)
     def post(self, role: models.Role) -> Dict[str, models.Role]:
         # pylint: disable=unused-argument
         """
@@ -94,7 +94,7 @@ class RoleView(MethodView):
     @doc_login_required
     @permission_required(PERMISSIONS.RoleDelete)
     @blp.arguments(BaseIntListSchema, as_kwargs=True)
-    @blp.response(BaseMsgSchema)
+    @blp.response(200, BaseMsgSchema)
     def delete(self, lst: List[int]) -> None:
         # pylint: disable=unused-argument
         """
@@ -115,7 +115,7 @@ class RoleItemView(MethodView):
     @doc_login_required
     @permission_required(PERMISSIONS.RoleEdit)
     @blp.arguments(schemas.RoleSchema)
-    @blp.response(schemas.RoleItemSchema)
+    @blp.response(200, schemas.RoleItemSchema)
     def put(self, role: models.Role, role_id: int) -> Dict[str, models.Role]:
         """
         更新角色权限
@@ -129,7 +129,7 @@ class RoleItemView(MethodView):
 
     @doc_login_required
     @permission_required(PERMISSIONS.RoleDelete)
-    @blp.response(BaseMsgSchema)
+    @blp.response(200, BaseMsgSchema)
     def delete(self, role_id: int) -> None:
         """
         删除角色权限
@@ -140,7 +140,7 @@ class RoleItemView(MethodView):
 
     @doc_login_required
     @permission_required(PERMISSIONS.RoleQuery)
-    @blp.response(schemas.RoleItemSchema)
+    @blp.response(200, schemas.RoleItemSchema)
     def get(self, role_id: int) -> Dict[str, models.Role]:
         # pylint: disable=unused-argument
         """

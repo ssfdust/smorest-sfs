@@ -49,10 +49,20 @@ def render_config_to_toml(configs: Config):
         print()
 
 
-def render_config_to_dockercompose(configs: Config):
+def render_boilerplates_config(module_name: str, module_title: str) -> Path:
     render = Render(
         "tasks/app/templates/configurations",
-        ["docker-compose.yml.template", "docker-compose.yml"],
+        [["boilerplates.toml.template", "boilerplates.toml"]],
+        {"module_name": module_name, "module_title": module_title},
+    )
+    render.render()
+
+
+def render_config_to_dockercompose(configs: Config):
+    breakpoint()
+    render = Render(
+        "tasks/app/templates/configurations",
+        [["docker-compose.yml.template", "docker-compose.yml"]],
         configs.production_config,
     )
     render.render()
@@ -81,6 +91,7 @@ def render_crud_modules(module_name: str, config: Dict):
         for template_file in (
             "__init__",
             "test_models",
+            "instances",
             "conftest",
             "resources/__init__",
             "resources/test_general_access",

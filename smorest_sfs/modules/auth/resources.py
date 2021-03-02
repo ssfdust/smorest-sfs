@@ -36,7 +36,7 @@ from .helpers import add_token_to_database
 class LoginView(MethodView):
     @blp.arguments(params.LoginParams, location="json", as_kwargs=True)
     @blp.arguments(params.CookieParam, location="cookies", as_kwargs=True)
-    @blp.response(schemas.UserViewPostSchema, description="登录成功")
+    @blp.response(200, schemas.UserViewPostSchema, description="登录成功")
     def post(
         self, **args: str
     ) -> Dict[str, Union[int, str, Dict[str, Dict[str, str]]]]:
@@ -57,7 +57,7 @@ class LoginView(MethodView):
 
 @blp.route("/captcha")
 class CaptchaView(MethodView):
-    @blp.response(description="图片")
+    @blp.response(200, description="图片")
     def get(self) -> Response:
         """
         获取验证码图片
@@ -78,7 +78,7 @@ class CaptchaView(MethodView):
 @blp.route("/forget-password")
 class ForgetPasswordView(MethodView):
     @blp.arguments(params.EmailParam, as_kwargs=True)
-    @blp.response(BaseMsgSchema, description="成功")
+    @blp.response(200, BaseMsgSchema, description="成功")
     def post(self, email: str) -> Optional[Dict[str, Union[str, int]]]:
         """
         忘记密码
@@ -106,7 +106,7 @@ class ForgetPasswordView(MethodView):
 @blp.route("/confirm")
 class UserConfirmView(MethodView):
     @doc_login_required
-    @blp.response(BaseMsgSchema, description="验证成功")
+    @blp.response(200, BaseMsgSchema, description="验证成功")
     def get(self) -> Dict[str, Union[str, int]]:
         """
         完成用户验证
@@ -124,7 +124,7 @@ class UserConfirmView(MethodView):
 class ResetForgotPasswordView(MethodView):
     @doc_login_required
     @blp.arguments(params.PasswdParam, as_kwargs=True)
-    @blp.response(BaseMsgSchema, description="验证成功")
+    @blp.response(200, BaseMsgSchema, description="验证成功")
     def put(self, password: str, confirm_password: str) -> Dict[str, Union[int, str]]:
         """
         忘记密码后修改
@@ -142,7 +142,7 @@ class ResetForgotPasswordView(MethodView):
         return {"code": 0, "msg": "success"}
 
     @doc_login_required
-    @blp.response(BaseMsgSchema, description="可以访问")
+    @blp.response(200, BaseMsgSchema, description="可以访问")
     def get(self) -> Dict[str, Any]:
         """
         忘记密码token测试
@@ -158,7 +158,7 @@ class ResetForgotPasswordView(MethodView):
 @blp.route("/refresh")
 class RefreshJwtTokenView(MethodView):
     @doc_refresh_required
-    @blp.response(schemas.RefreshViewPostSchema, description="获取成功")
+    @blp.response(200, schemas.RefreshViewPostSchema, description="获取成功")
     def post(self) -> Dict[str, Any]:
         """
         用户刷新Token
@@ -177,7 +177,7 @@ class RefreshJwtTokenView(MethodView):
 @blp.route("/logout")
 class LogoutView(MethodView):
     @doc_login_required
-    @blp.response(BaseMsgSchema, description="登出成功")
+    @blp.response(200, BaseMsgSchema, description="登出成功")
     def post(self) -> Dict[str, Union[str, int]]:
         """
         用户登出

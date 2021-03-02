@@ -21,7 +21,7 @@ class LogView(MethodView):
     @doc_login_required
     @permission_required(PERMISSIONS.LogQuery)
     @blp.arguments(schemas.LogParam, location="query", as_kwargs=True)
-    @blp.response(schemas.LogPageSchema)
+    @blp.response(200, schemas.LogPageSchema)
     @paginate()
     def get(self, **kwargs: Any) -> "BaseQuery[models.Log]":
         # pylint: disable=unused-argument
@@ -38,7 +38,7 @@ class ResponseLogView(MethodView):
     @doc_login_required
     @permission_required(PERMISSIONS.LogQuery)
     @blp.arguments(schemas.RespLogParam, location="query", as_kwargs=True)
-    @blp.response(schemas.RespLogPageSchema)
+    @blp.response(200, schemas.RespLogPageSchema)
     @paginate()
     def get(self, **kwargs: Any) -> "BaseQuery[models.Log]":
         # pylint: disable=unused-argument

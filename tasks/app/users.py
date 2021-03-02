@@ -21,7 +21,7 @@ def create_user(context, email, is_admin=True, is_active=True):
     新建用户
     """
     from smorest_sfs.services.users import create_user as _create_user
-    from smorest_sfs.modules.users.models import User
+    from smorest_sfs.modules.users.models import User, UserInfo
 
     username = email.split("@")[0]
     password = getpass.getpass("Password:")
@@ -32,4 +32,6 @@ def create_user(context, email, is_admin=True, is_active=True):
         active=is_active,
         confirmed_at=datetime.utcnow(),
     )
+    user.userinfo = UserInfo(sex=1, age=18, first_name=username, last_name="L")
+
     _create_user(user, is_admin)

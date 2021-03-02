@@ -4,10 +4,10 @@ from typing import Any, Callable, Iterator
 
 import pytest
 
-from smorest_sfs.modules.{{module_name}}.models import {{ model_name }}
-
 
 @pytest.mark.usefixtures("flask_app")
 def test_{{ module_name_singular }}(temp_db_instance_helper: Callable[..., Iterator[Any]]) -> None:
+    from smorest_sfs.modules.{{module_name}}.models import {{ model_name }}
+
     for {{ module_name_singular }} in temp_db_instance_helper({{ model_name }}(name="test")):
         assert str({{ module_name_singular }}) == "test"

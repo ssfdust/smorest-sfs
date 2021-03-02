@@ -49,6 +49,7 @@ def init_development_users(password: Optional[str] = None) -> None:
     """
     su_role = Role.get_by_name(name="SuperUser")
     if not password:
+        print("请输入初始超级用户密码")
         password = getpass("Password:")
 
     # create super user

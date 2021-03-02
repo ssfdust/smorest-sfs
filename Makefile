@@ -5,7 +5,7 @@ USER := $(shell whoami)
 all:
 	sudo docker build --build-arg http_proxy=$(PROXYBIND) \
 		--build-arg https_proxy=$(PROXYBIND) \
-		-t ssfdust/yt-media .
+		-t ssfdust/smorest-sfs .
 
 services:
 	sudo systemctl start postgresql rabbitmq redis

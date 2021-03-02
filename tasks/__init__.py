@@ -14,7 +14,7 @@ import platform
 from invoke import Collection
 from invoke.executor import Executor
 
-from . import app
+from . import app, logger
 
 # NOTE: `namespace` or `ns` name is required!
 namespace = Collection(app,)

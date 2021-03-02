@@ -8,15 +8,16 @@ from smorest_sfs.modules.auth import ROLES
 from tests._utils.launcher import AccessLauncher
 
 if TYPE_CHECKING:
-    from smorest_sfs.modules.{{module_name}}.models import {{ model_name }}
+    from smorest_sfs.modules.projects.models import Project
+
 
 class TestListView(AccessLauncher):
 
-    login_roles = [ROLES.{{ model_name }}Manager]
-    fixture_names = ("flask_app_client", "flask_app", "regular_user", "{{ module_name_singular }}s")
-    item_view = "{{ model_name }}.{{ model_name }}ItemView"
-    listview = "{{ model_name }}.{{ model_name }}ListView"
-    view = "{{ model_name }}.{{ model_name }}View"
+    login_roles = [ROLES.ProjectManager]
+    fixture_names = ("flask_app_client", "flask_app", "regular_user", "projects")
+    item_view = "Project.ProjectItemView"
+    listview = "Project.ProjectListView"
+    view = "Project.ProjectView"
 
     def test_get_options(self) -> None:
         self._get_options()
@@ -29,5 +30,5 @@ class TestListView(AccessLauncher):
         assert len(data) == cnt
 
     def test_get_item(self) -> None:
-        data = self._get_item({{ module_name_singular }}_id=self.{{ module_name_singular }}s[0].id_)
+        data = self._get_item(project_id=self.projects[0].id_)
         assert data.keys() >= {"id", "name"}

@@ -28,7 +28,7 @@ samanager: SqlaManager[models.Group] = SqlaManager(db.session)
 class GroupListView(MethodView):
     @doc_login_required
     @permission_required(PERMISSIONS.GroupQuery)
-    @blp.response(schemas.GroupListSchema)
+    @blp.response(200, schemas.GroupListSchema)
     def get(self) -> Dict[str, List[models.Group]]:
         # pylint: disable=unused-argument
         """
@@ -46,7 +46,7 @@ class GroupView(MethodView):
     @doc_login_required
     @permission_required(PERMISSIONS.GroupQuery)
     @blp.arguments(GeneralParam, location="query", as_kwargs=True)
-    @blp.response(schemas.GroupPageSchema)
+    @blp.response(200, schemas.GroupPageSchema)
     @paginate()
     def get(self, **kwargs: Dict[str, Any]) -> "BaseQuery[models.Group]":
         # pylint: disable=unused-argument
@@ -60,7 +60,7 @@ class GroupView(MethodView):
     @doc_login_required
     @permission_required(PERMISSIONS.GroupAdd)
     @blp.arguments(schemas.GroupSchema)
-    @blp.response(schemas.GroupItemSchema)
+    @blp.response(200, schemas.GroupItemSchema)
     def post(self, group: models.Group) -> Dict[str, models.Group]:
         # pylint: disable=unused-argument
         """
@@ -81,7 +81,7 @@ class GroupItemView(MethodView):
     @doc_login_required
     @permission_required(PERMISSIONS.GroupEdit)
     @blp.arguments(schemas.GroupSchema)
-    @blp.response(schemas.GroupItemSchema)
+    @blp.response(200, schemas.GroupItemSchema)
     def put(self, group: models.Group, group_id: int) -> Dict[str, models.Group]:
         """
         更新用户组
@@ -97,7 +97,7 @@ class GroupItemView(MethodView):
 
     @doc_login_required
     @permission_required(PERMISSIONS.GroupDelete)
-    @blp.response(BaseMsgSchema)
+    @blp.response(200, BaseMsgSchema)
     def delete(self, group_id: int) -> None:
         """
         删除用户组
@@ -112,7 +112,7 @@ class GroupItemView(MethodView):
 
     @doc_login_required
     @permission_required(PERMISSIONS.GroupQuery)
-    @blp.response(schemas.GroupItemSchema)
+    @blp.response(200, schemas.GroupItemSchema)
     def get(self, group_id: int) -> Dict[str, models.Group]:
         # pylint: disable=unused-argument
         """
@@ -131,7 +131,7 @@ class GroupUserView(MethodView):
     @doc_login_required
     @permission_required(PERMISSIONS.GroupEdit)
     @blp.arguments(schemas.GroupUserSchema)
-    @blp.response(schemas.GroupItemSchema)
+    @blp.response(200, schemas.GroupItemSchema)
     def put(self, group: models.Group, group_id: int) -> Dict[str, models.Group]:
         """
         更新用户组成员

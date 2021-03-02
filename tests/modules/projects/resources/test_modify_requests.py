@@ -7,16 +7,16 @@ import pytest
 from tests._utils.launcher import ModifyLauncher
 
 
-class Test{{ model_name }}Modify(ModifyLauncher):
-    items = "{{ module_name_singular }}s"
+class TestProjectModify(ModifyLauncher):
+    items = "projects"
     fixture_names = ("flask_app_client", "flask_app", "regular_user", "db",) + (items,)
-    view = "{{ model_name }}.{{ model_name }}View"
-    item_view = "{{ model_name }}.{{ model_name }}ItemView"
-    login_roles = ["{{ model_name }}Manager"]
-    edit_param_key = "{{ module_name_singular }}_id"
+    view = "Project.ProjectView"
+    item_view = "Project.ProjectItemView"
+    login_roles = ["ProjectManager"]
+    edit_param_key = "project_id"
 
-    def test_add(self, {{ module_name_singular }}_args: Dict[str, str]) -> None:
-        data = self._add_request({{ module_name_singular }}_args)
+    def test_add(self, project_args: Dict[str, str]) -> None:
+        data = self._add_request(project_args)
         assert data.keys() > {"id", "name"}
 
     def test_delete(self) -> None:

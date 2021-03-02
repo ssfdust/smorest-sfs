@@ -1,29 +1,3 @@
-Smorest Sync Full Stack -- Backend
-================
-
-.. image:: https://img.shields.io/badge/python-3.7%20|%203.8-0366d6
-   :target: https://www.python.org
-   :alt: Python Version
-
-.. image:: https://api.codeclimate.com/v1/badges/9387f1cccf11e2a5f4e5/maintainability
-   :target: https://codeclimate.com/github/ssfdust/smorest-sfs/maintainability
-   :alt: Maintainability
-
-.. image:: https://api.codeclimate.com/v1/badges/9387f1cccf11e2a5f4e5/test_coverage
-   :target: https://codeclimate.com/github/ssfdust/smorest-sfs/test_coverage
-   :alt: Test Coverage
-
-.. image:: https://travis-ci.org/ssfdust/smorest-sfs.svg?branch=master
-   :target: https://travis-ci.org/ssfdust/smorest-sfs
-
-.. image:: https://img.shields.io/docker/image-size/ssfdust/smorest-sfs
-   :alt: Docker Image Size (latest by date)
-   :target: https://hub.docker.com/r/ssfdust/smorest-sfs
-
-.. image:: https://img.shields.io/badge/License-Apache%202.0-blue.svg
-   :target: https://github.com/ssfudst/smorest-sfs
-   :alt: LICENSE
-
 快速开始
 ====================
 

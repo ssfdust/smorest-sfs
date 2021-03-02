@@ -19,7 +19,7 @@ from . import blp, models, schemas
 class MenuView(MethodView):
     @doc_login_required
     @role_required(ROLES.User)
-    @blp.response(schemas.MenuListSchema)
+    @blp.response(200, schemas.MenuListSchema)
     def get(self) -> Dict[str, Any]:
         # pylint: disable=unused-argument
         """

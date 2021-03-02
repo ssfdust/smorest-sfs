@@ -5,6 +5,7 @@ from typing import Any, Dict, Union, List
 ELEMENT = Dict[str, Any]
 JSON = Union[List[ELEMENT], ELEMENT]
 
+
 def parse_dict(data: JSON) -> JSON:
     if isinstance(data, list):
         for element in data:
@@ -18,6 +19,16 @@ def parse_dict(data: JSON) -> JSON:
 
 
 def test_parse_dict() -> None:
-    data = [{"id": 1, "name": "a", "children": [{"id": 2, "name": "b", "children": [{"id": 4, "name": "d"}]}]}, {"id": 3, "name": "c"}]
+    data = [
+        {
+            "id": 1,
+            "name": "a",
+            "children": [{"id": 2, "name": "b", "children": [{"id": 4, "name": "d"}]}],
+        },
+        {"id": 3, "name": "c"},
+    ]
     parse_dict(data)
-    assert data == [{"name": "a", "children": [{"name": "b", "children": [{"name": "d"}]}]}, {"name": "c"}]
+    assert data == [
+        {"name": "a", "children": [{"name": "b", "children": [{"name": "d"}]}]},
+        {"name": "c"},
+    ]

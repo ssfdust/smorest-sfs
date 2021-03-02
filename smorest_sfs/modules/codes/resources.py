@@ -20,7 +20,7 @@ class CodeListView(MethodView):
     @doc_login_required
     @permission_required(PERMISSIONS.CodeQuery)
     @blp.arguments(schemas.TypeCodeSchema, location="query", as_kwargs=True)
-    @blp.response(schemas.CodeListSchema)
+    @blp.response(200, schemas.CodeListSchema)
     def get(self, type_code: str) -> Dict[str, Any]:
         # pylint: disable=unused-argument
         """

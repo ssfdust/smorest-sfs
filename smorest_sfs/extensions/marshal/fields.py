@@ -24,9 +24,7 @@ class PendulumField(fields.DateTime):
     主要用以结合flask-babel模块处理时区问题，返回后以Pendulumn类型
     """
 
-    def _deserialize(
-        self, value: str, attr: Any, data: Any, **kwargs: Any
-    ) -> DateTime:
+    def _deserialize(self, value: str, attr: Any, data: Any, **kwargs: Any) -> DateTime:
         """反序列化"""
         if not value:
             raise self.make_error("invalid", input=value, obj_type=self.OBJ_TYPE)

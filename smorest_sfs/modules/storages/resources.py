@@ -31,7 +31,7 @@ class StoragesView(MethodView):
 
     @doc_login_required
     @role_required(ROLES.User)
-    @blp.response(code=200, description="获取文件")
+    @blp.response(200, description="获取文件")
     def get(self, file_id: int) -> Response:
         """
         获取文件
@@ -43,7 +43,7 @@ class StoragesView(MethodView):
     @doc_login_required
     @role_required(ROLES.User)
     @blp.arguments(schemas.UploadParams(), location="files")
-    @blp.response(BaseMsgSchema)
+    @blp.response(200, BaseMsgSchema)
     def put(
         self, args: Dict[str, FileStorage], file_id: int
     ) -> Dict[str, Union[int, str]]:
@@ -61,7 +61,7 @@ class StoragesView(MethodView):
 
     @doc_login_required
     @role_required(ROLES.User)
-    @blp.response(BaseMsgSchema)
+    @blp.response(200, BaseMsgSchema)
     def delete(self, file_id: int) -> None:
         """
         删除文件
@@ -78,7 +78,7 @@ class ForceDeleteView(MethodView):
 
     @doc_login_required
     @permission_required(PERMISSIONS.FileForceDelete)
-    @blp.response(BaseMsgSchema)
+    @blp.response(200, BaseMsgSchema)
     def delete(self, file_id: int) -> Dict[str, Any]:
         """永久删除文件"""
         storage = models.Storages.find_or_fail(file_id)
@@ -96,7 +96,7 @@ class UploadView(MethodView):
     @doc_login_required
     @role_required(ROLES.User)
     @blp.arguments(schemas.UploadParams(), location="files")
-    @blp.response(schemas.UploadSchema)
+    @blp.response(200, schemas.UploadSchema)
     def post(
         self, args: Dict[str, FileStorage], storetype: str
     ) -> Dict[str, Union[int, str, Dict[str, int]]]:
