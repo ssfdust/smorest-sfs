@@ -91,3 +91,8 @@ Smorest Sync Full Stack -- Backend
     $ FLASK_ENV=testing inv app.init.initdb
 
 好了，到这里所有准备工作已经就绪。使用`inv --list`指令来查看支持的指令吧。
+
+
+.. image:: https://api.codacy.com/project/badge/Grade/fafb66b9942945f19b255b45daa50a9b
+   :alt: Codacy Badge
+   :target: https://app.codacy.com/gh/ssfdust/smorest-sfs?utm_source=github.com&utm_medium=referral&utm_content=ssfdust/smorest-sfs&utm_campaign=Badge_Grade_Settings
