@@ -1,7 +1,7 @@
 Smorest Sync Full Stack -- Backend
 ================
 
-.. image:: https://img.shields.io/badge/python-3.7%20|%203.8|%203.9-0366d6
+.. image:: https://img.shields.io/badge/python-3.7%20|%203.8%20|%203.9-0366d6
    :target: https://www.python.org
    :alt: Python Version
 
