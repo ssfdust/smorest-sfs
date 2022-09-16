@@ -32,10 +32,10 @@ optional = false
 python-versions = ">=3.6"
 
 [package.extras]
-dev = ["PyYAML (>=3.10)", "prance[osv] (>=0.11)", "marshmallow (>=3.0.0)", "pytest", "mock", "flake8 (==3.8.4)", "flake8-bugbear (==20.11.1)", "pre-commit (>=2.4,<3.0)", "tox"]
+dev = ["PyYAML (>=3.10)", "flake8 (==3.8.4)", "flake8-bugbear (==20.11.1)", "marshmallow (>=3.0.0)", "mock", "prance[osv] (>=0.11)", "pre-commit (>=2.4,<3.0)", "pytest", "tox"]
 docs = ["marshmallow (>=3.0.0)", "pyyaml (==5.4.1)", "sphinx (==3.4.3)", "sphinx-issues (==1.2.0)", "sphinx-rtd-theme (==0.5.1)"]
 lint = ["flake8 (==3.8.4)", "flake8-bugbear (==20.11.1)", "pre-commit (>=2.4,<3.0)"]
-tests = ["PyYAML (>=3.10)", "prance[osv] (>=0.11)", "marshmallow (>=3.0.0)", "pytest", "mock"]
+tests = ["PyYAML (>=3.10)", "marshmallow (>=3.0.0)", "mock", "prance[osv] (>=0.11)", "pytest"]
 validation = ["prance[osv] (>=0.11)"]
 yaml = ["PyYAML (>=3.10)"]
 
@@ -72,7 +72,7 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [package.extras]
-dev = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "zope.interface", "furo", "sphinx", "pre-commit"]
+dev = ["coverage[toml] (>=5.0.2)", "furo", "hypothesis", "pre-commit", "pympler", "pytest (>=4.3.0)", "six", "sphinx", "zope.interface"]
 docs = ["furo", "sphinx", "zope.interface"]
 tests = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "zope.interface"]
 tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six"]
@@ -160,12 +160,12 @@ vine = "1.3.0"
 [package.extras]
 arangodb = ["pyArango (>=1.3.2)"]
 auth = ["cryptography"]
-azureblockblob = ["azure-storage (==0.36.0)", "azure-common (==1.1.5)", "azure-storage-common (==1.1.0)"]
+azureblockblob = ["azure-common (==1.1.5)", "azure-storage (==0.36.0)", "azure-storage-common (==1.1.0)"]
 brotli = ["brotli (>=1.0.0)", "brotlipy (>=0.7.0)"]
 cassandra = ["cassandra-driver (<3.21.0)"]
 consul = ["python-consul"]
 cosmosdbsql = ["pydocumentdb (==2.3.2)"]
-couchbase = ["couchbase-cffi (<3.0.0)", "couchbase (<3.0.0)"]
+couchbase = ["couchbase (<3.0.0)", "couchbase-cffi (<3.0.0)"]
 couchdb = ["pycouchdb"]
 django = ["Django (>=1.11)"]
 dynamodb = ["boto3 (>=1.9.178)"]
@@ -326,8 +326,8 @@ Jinja2 = ">=2.10.1"
 Werkzeug = ">=0.15"
 
 [package.extras]
-dev = ["pytest", "coverage", "tox", "sphinx", "pallets-sphinx-themes", "sphinxcontrib-log-cabinet", "sphinx-issues"]
-docs = ["sphinx", "pallets-sphinx-themes", "sphinxcontrib-log-cabinet", "sphinx-issues"]
+dev = ["coverage", "pallets-sphinx-themes", "pytest", "sphinx", "sphinx-issues", "sphinxcontrib-log-cabinet", "tox"]
+docs = ["pallets-sphinx-themes", "sphinx", "sphinx-issues", "sphinxcontrib-log-cabinet"]
 dotenv = ["python-dotenv"]
 
 [[package]]
@@ -398,11 +398,11 @@ marshmallow = ">=2.0.0"
 six = ">=1.9.0"
 
 [package.extras]
-dev = ["flask-sqlalchemy", "pytest", "mock", "flake8 (==3.8.3)", "pre-commit (>=2.4,<3.0)", "tox", "marshmallow-sqlalchemy (>=0.13.0,<0.19.0)", "flake8-bugbear (==20.1.4)", "marshmallow-sqlalchemy (>=0.13.0)"]
-docs = ["marshmallow-sqlalchemy (>=0.13.0)", "Sphinx (==3.2.1)", "sphinx-issues (==1.2.0)"]
-lint = ["flake8 (==3.8.3)", "pre-commit (>=2.4,<3.0)", "flake8-bugbear (==20.1.4)"]
-sqlalchemy = ["flask-sqlalchemy", "marshmallow-sqlalchemy (>=0.13.0,<0.19.0)", "marshmallow-sqlalchemy (>=0.13.0)"]
-tests = ["flask-sqlalchemy", "pytest", "mock", "marshmallow-sqlalchemy (>=0.13.0,<0.19.0)", "marshmallow-sqlalchemy (>=0.13.0)"]
+dev = ["flake8 (==3.8.3)", "flake8-bugbear (==20.1.4)", "flask-sqlalchemy", "marshmallow-sqlalchemy (>=0.13.0)", "marshmallow-sqlalchemy (>=0.13.0,<0.19.0)", "mock", "pre-commit (>=2.4,<3.0)", "pytest", "tox"]
+docs = ["Sphinx (==3.2.1)", "marshmallow-sqlalchemy (>=0.13.0)", "sphinx-issues (==1.2.0)"]
+lint = ["flake8 (==3.8.3)", "flake8-bugbear (==20.1.4)", "pre-commit (>=2.4,<3.0)"]
+sqlalchemy = ["flask-sqlalchemy", "marshmallow-sqlalchemy (>=0.13.0)", "marshmallow-sqlalchemy (>=0.13.0,<0.19.0)"]
+tests = ["flask-sqlalchemy", "marshmallow-sqlalchemy (>=0.13.0)", "marshmallow-sqlalchemy (>=0.13.0,<0.19.0)", "mock", "pytest"]
 
 [[package]]
 name = "flask-migrate"
@@ -430,7 +430,7 @@ Flask = ">=0.8"
 redis = ">=2.7.6"
 
 [package.extras]
-dev = ["coverage", "pytest", "pytest-mock", "pre-commit"]
+dev = ["coverage", "pre-commit", "pytest", "pytest-mock"]
 tests = ["coverage", "pytest", "pytest-mock"]
 
 [[package]]
@@ -508,6 +508,9 @@ category = "main"
 optional = false
 python-versions = ">=3.4"
 
+[package.dependencies]
+setuptools = ">=3.0"
+
 [package.extras]
 eventlet = ["eventlet (>=0.9.7)"]
 gevent = ["gevent (>=0.13)"]
@@ -541,6 +544,7 @@ pexpect = {version = ">4.3", markers = "sys_platform != \"win32\""}
 pickleshare = "*"
 prompt-toolkit = ">=2.0.0,<3.0.0 || >3.0.0,<3.0.1 || >3.0.1,<3.1.0"
 pygments = "*"
+setuptools = ">=18.5"
 traitlets = ">=4.2"
 
 [package.extras]
@@ -549,10 +553,10 @@ doc = ["Sphinx (>=1.3)"]
 kernel = ["ipykernel"]
 nbconvert = ["nbconvert"]
 nbformat = ["nbformat"]
-notebook = ["notebook", "ipywidgets"]
+notebook = ["ipywidgets", "notebook"]
 parallel = ["ipyparallel"]
 qtconsole = ["qtconsole"]
-test = ["nose (>=0.10.1)", "requests", "testpath", "pygments", "nbformat", "ipykernel", "numpy (>=1.17)"]
+test = ["ipykernel", "nbformat", "nose (>=0.10.1)", "numpy (>=1.17)", "pygments", "requests", "testpath"]
 
 [[package]]
 name = "ipython-genutils"
@@ -655,22 +659,23 @@ colorama = {version = ">=0.3.4", markers = "sys_platform == \"win32\""}
 win32-setctime = {version = ">=1.0.0", markers = "sys_platform == \"win32\""}
 
 [package.extras]
-dev = ["codecov (>=2.0.15)", "colorama (>=0.3.4)", "flake8 (>=3.7.7)", "isort (>=4.3.20)", "tox (>=3.9.0)", "tox-travis (>=0.12)", "pytest (>=4.6.2)", "pytest-cov (>=2.7.1)", "Sphinx (>=2.2.1)", "sphinx-autobuild (>=0.7.1)", "sphinx-rtd-theme (>=0.4.3)", "black (>=19.3b0)"]
+dev = ["Sphinx (>=2.2.1)", "black (>=19.3b0)", "codecov (>=2.0.15)", "colorama (>=0.3.4)", "flake8 (>=3.7.7)", "isort (>=4.3.20)", "pytest (>=4.6.2)", "pytest-cov (>=2.7.1)", "sphinx-autobuild (>=0.7.1)", "sphinx-rtd-theme (>=0.4.3)", "tox (>=3.9.0)", "tox-travis (>=0.12)"]
 
 [[package]]
-name = "mako"
-version = "1.1.4"
-description = "A super-fast templating language that borrows the  best ideas from the existing templating languages."
+name = "Mako"
+version = "1.2.2"
+description = "A super-fast templating language that borrows the best ideas from the existing templating languages."
 category = "main"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+python-versions = ">=3.7"
 
 [package.dependencies]
 MarkupSafe = ">=0.9.2"
 
 [package.extras]
-babel = ["babel"]
+babel = ["Babel"]
 lingua = ["lingua"]
+testing = ["pytest"]
 
 [[package]]
 name = "markupsafe"
@@ -689,9 +694,9 @@ optional = false
 python-versions = ">=3.5"
 
 [package.extras]
-dev = ["pytest", "pytz", "simplejson", "mypy (==0.790)", "flake8 (==3.8.4)", "flake8-bugbear (==20.11.1)", "pre-commit (>=2.4,<3.0)", "tox"]
-docs = ["sphinx (==3.3.1)", "sphinx-issues (==1.2.0)", "alabaster (==0.7.12)", "sphinx-version-warning (==1.1.2)", "autodocsumm (==0.2.2)"]
-lint = ["mypy (==0.790)", "flake8 (==3.8.4)", "flake8-bugbear (==20.11.1)", "pre-commit (>=2.4,<3.0)"]
+dev = ["flake8 (==3.8.4)", "flake8-bugbear (==20.11.1)", "mypy (==0.790)", "pre-commit (>=2.4,<3.0)", "pytest", "pytz", "simplejson", "tox"]
+docs = ["alabaster (==0.7.12)", "autodocsumm (==0.2.2)", "sphinx (==3.3.1)", "sphinx-issues (==1.2.0)", "sphinx-version-warning (==1.1.2)"]
+lint = ["flake8 (==3.8.4)", "flake8-bugbear (==20.11.1)", "mypy (==0.790)", "pre-commit (>=2.4,<3.0)"]
 tests = ["pytest", "pytz", "simplejson"]
 
 [[package]]
@@ -707,8 +712,8 @@ marshmallow = ">=3.0.0"
 SQLAlchemy = ">=1.2.0"
 
 [package.extras]
-dev = ["pytest", "pytest-lazy-fixture", "flake8 (==3.8.4)", "flake8-bugbear (==20.11.1)", "pre-commit (>=2.0,<3.0)", "tox"]
-docs = ["sphinx (==3.4.3)", "alabaster (==0.7.12)", "sphinx-issues (==1.2.0)"]
+dev = ["flake8 (==3.8.4)", "flake8-bugbear (==20.11.1)", "pre-commit (>=2.0,<3.0)", "pytest", "pytest-lazy-fixture", "tox"]
+docs = ["alabaster (==0.7.12)", "sphinx (==3.4.3)", "sphinx-issues (==1.2.0)"]
 lint = ["flake8 (==3.8.4)", "flake8-bugbear (==20.11.1)", "pre-commit (>=2.0,<3.0)"]
 tests = ["pytest", "pytest-lazy-fixture"]
 
@@ -845,7 +850,7 @@ python-versions = "*"
 [package.extras]
 argon2 = ["argon2-cffi (>=18.2.0)"]
 bcrypt = ["bcrypt (>=3.1.0)"]
-build_docs = ["sphinx (>=1.6)", "sphinxcontrib-fulltoc (>=1.2.0)", "cloud-sptheme (>=1.10.1)"]
+build_docs = ["cloud-sptheme (>=1.10.1)", "sphinx (>=1.6)", "sphinxcontrib-fulltoc (>=1.2.0)"]
 totp = ["cryptography"]
 
 [[package]]
@@ -1108,7 +1113,7 @@ coverage = ">=5.2.1"
 pytest = ">=4.6"
 
 [package.extras]
-testing = ["fields", "hunter", "process-tests (==2.0.2)", "six", "pytest-xdist", "virtualenv"]
+testing = ["fields", "hunter", "process-tests (==2.0.2)", "pytest-xdist", "six", "virtualenv"]
 
 [[package]]
 name = "pytest-sugar"
@@ -1189,6 +1194,19 @@ python-versions = "*"
 dev = ["pytest"]
 
 [[package]]
+name = "setuptools"
+version = "65.3.0"
+description = "Easily download, build, install, upgrade, and uninstall Python packages"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.extras]
+docs = ["furo", "jaraco.packaging (>=9)", "jaraco.tidelift (>=1.4)", "pygments-github-lexers (==0.0.5)", "rst.linker (>=1.9)", "sphinx", "sphinx-favicon", "sphinx-hoverxref (<2)", "sphinx-inline-tabs", "sphinx-notfound-page (==0.8.3)", "sphinx-reredirects", "sphinxcontrib-towncrier"]
+testing = ["build[virtualenv]", "filelock (>=3.4.0)", "flake8 (<5)", "flake8-2020", "ini2toml[lite] (>=0.9)", "jaraco.envs (>=2.2)", "jaraco.path (>=3.2.0)", "mock", "pip (>=19.1)", "pip-run (>=8.8)", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=1.3)", "pytest-flake8", "pytest-mypy (>=0.9.1)", "pytest-perf", "pytest-xdist", "tomli-w (>=1.0.0)", "virtualenv (>=13.0.0)", "wheel"]
+testing-integration = ["build[virtualenv]", "filelock (>=3.4.0)", "jaraco.envs (>=2.2)", "jaraco.path (>=3.2.0)", "pytest", "pytest-enabler", "pytest-xdist", "tomli", "virtualenv (>=13.0.0)", "wheel"]
+
+[[package]]
 name = "six"
 version = "1.15.0"
 description = "Python 2 and 3 compatibility utilities"
@@ -1209,12 +1227,12 @@ mssql = ["pyodbc"]
 mssql_pymssql = ["pymssql"]
 mssql_pyodbc = ["pyodbc"]
 mysql = ["mysqlclient"]
-oracle = ["cx-oracle"]
+oracle = ["cx_oracle"]
 postgresql = ["psycopg2"]
 postgresql_pg8000 = ["pg8000 (<1.16.6)"]
 postgresql_psycopg2binary = ["psycopg2-binary"]
 postgresql_psycopg2cffi = ["psycopg2cffi"]
-pymysql = ["pymysql (<1)", "pymysql"]
+pymysql = ["pymysql", "pymysql (<1)"]
 
 [[package]]
 name = "sqlalchemy-mixins"
@@ -1285,8 +1303,8 @@ intervals = ["intervals (>=0.7.1)"]
 password = ["passlib (>=1.6,<2.0)"]
 pendulum = ["pendulum (>=2.0.5)"]
 phone = ["phonenumbers (>=5.9.2)"]
-test = ["pytest (>=2.7.1)", "Pygments (>=1.2)", "Jinja2 (>=2.3)", "docutils (>=0.10)", "flexmock (>=0.9.7)", "mock (==2.0.0)", "psycopg2 (>=2.5.1)", "psycopg2cffi (>=2.8.1)", "pg8000 (>=1.12.4)", "pytz (>=2014.2)", "python-dateutil (>=2.6)", "pymysql", "flake8 (>=2.4.0)", "isort (>=4.2.2)", "pyodbc"]
-test_all = ["anyjson (>=0.3.3)", "arrow (>=0.3.4)", "Babel (>=1.3)", "colour (>=0.0.4)", "cryptography (>=0.6)", "intervals (>=0.7.1)", "passlib (>=1.6,<2.0)", "pendulum (>=2.0.5)", "phonenumbers (>=5.9.2)", "pytest (>=2.7.1)", "Pygments (>=1.2)", "Jinja2 (>=2.3)", "docutils (>=0.10)", "flexmock (>=0.9.7)", "mock (==2.0.0)", "psycopg2 (>=2.5.1)", "psycopg2cffi (>=2.8.1)", "pg8000 (>=1.12.4)", "pytz (>=2014.2)", "python-dateutil (>=2.6)", "pymysql", "flake8 (>=2.4.0)", "isort (>=4.2.2)", "pyodbc", "python-dateutil", "furl (>=0.4.1)"]
+test = ["Jinja2 (>=2.3)", "Pygments (>=1.2)", "docutils (>=0.10)", "flake8 (>=2.4.0)", "flexmock (>=0.9.7)", "isort (>=4.2.2)", "mock (==2.0.0)", "pg8000 (>=1.12.4)", "psycopg2 (>=2.5.1)", "psycopg2cffi (>=2.8.1)", "pymysql", "pyodbc", "pytest (>=2.7.1)", "python-dateutil (>=2.6)", "pytz (>=2014.2)"]
+test_all = ["Babel (>=1.3)", "Jinja2 (>=2.3)", "Pygments (>=1.2)", "anyjson (>=0.3.3)", "arrow (>=0.3.4)", "colour (>=0.0.4)", "cryptography (>=0.6)", "docutils (>=0.10)", "flake8 (>=2.4.0)", "flexmock (>=0.9.7)", "furl (>=0.4.1)", "intervals (>=0.7.1)", "isort (>=4.2.2)", "mock (==2.0.0)", "passlib (>=1.6,<2.0)", "pendulum (>=2.0.5)", "pg8000 (>=1.12.4)", "phonenumbers (>=5.9.2)", "psycopg2 (>=2.5.1)", "psycopg2cffi (>=2.8.1)", "pymysql", "pyodbc", "pytest (>=2.7.1)", "python-dateutil", "python-dateutil (>=2.6)", "pytz (>=2014.2)"]
 timezone = ["python-dateutil"]
 url = ["furl (>=0.4.1)"]
 
@@ -1424,11 +1442,11 @@ python-versions = ">=3.6"
 marshmallow = ">=3.0.0"
 
 [package.extras]
-dev = ["pytest", "webtest (==2.0.35)", "webtest-aiohttp (==2.0.0)", "pytest-aiohttp (>=0.3.0)", "Flask (>=0.12.5)", "Django (>=2.2.0)", "bottle (>=0.12.13)", "tornado (>=4.5.2)", "pyramid (>=1.9.1)", "falcon (>=2.0.0)", "aiohttp (>=3.0.8)", "mypy (==0.790)", "flake8 (==3.8.4)", "flake8-bugbear (==20.11.1)", "pre-commit (>=2.4,<3.0)", "tox"]
-docs = ["Sphinx (==3.3.1)", "sphinx-issues (==1.2.0)", "sphinx-typlog-theme (==0.8.0)", "Flask (>=0.12.5)", "Django (>=2.2.0)", "bottle (>=0.12.13)", "tornado (>=4.5.2)", "pyramid (>=1.9.1)", "falcon (>=2.0.0)", "aiohttp (>=3.0.8)"]
-frameworks = ["Flask (>=0.12.5)", "Django (>=2.2.0)", "bottle (>=0.12.13)", "tornado (>=4.5.2)", "pyramid (>=1.9.1)", "falcon (>=2.0.0)", "aiohttp (>=3.0.8)"]
-lint = ["mypy (==0.790)", "flake8 (==3.8.4)", "flake8-bugbear (==20.11.1)", "pre-commit (>=2.4,<3.0)"]
-tests = ["pytest", "webtest (==2.0.35)", "webtest-aiohttp (==2.0.0)", "pytest-aiohttp (>=0.3.0)", "Flask (>=0.12.5)", "Django (>=2.2.0)", "bottle (>=0.12.13)", "tornado (>=4.5.2)", "pyramid (>=1.9.1)", "falcon (>=2.0.0)", "aiohttp (>=3.0.8)"]
+dev = ["Django (>=2.2.0)", "Flask (>=0.12.5)", "aiohttp (>=3.0.8)", "bottle (>=0.12.13)", "falcon (>=2.0.0)", "flake8 (==3.8.4)", "flake8-bugbear (==20.11.1)", "mypy (==0.790)", "pre-commit (>=2.4,<3.0)", "pyramid (>=1.9.1)", "pytest", "pytest-aiohttp (>=0.3.0)", "tornado (>=4.5.2)", "tox", "webtest (==2.0.35)", "webtest-aiohttp (==2.0.0)"]
+docs = ["Django (>=2.2.0)", "Flask (>=0.12.5)", "Sphinx (==3.3.1)", "aiohttp (>=3.0.8)", "bottle (>=0.12.13)", "falcon (>=2.0.0)", "pyramid (>=1.9.1)", "sphinx-issues (==1.2.0)", "sphinx-typlog-theme (==0.8.0)", "tornado (>=4.5.2)"]
+frameworks = ["Django (>=2.2.0)", "Flask (>=0.12.5)", "aiohttp (>=3.0.8)", "bottle (>=0.12.13)", "falcon (>=2.0.0)", "pyramid (>=1.9.1)", "tornado (>=4.5.2)"]
+lint = ["flake8 (==3.8.4)", "flake8-bugbear (==20.11.1)", "mypy (==0.790)", "pre-commit (>=2.4,<3.0)"]
+tests = ["Django (>=2.2.0)", "Flask (>=0.12.5)", "aiohttp (>=3.0.8)", "bottle (>=0.12.13)", "falcon (>=2.0.0)", "pyramid (>=1.9.1)", "pytest", "pytest-aiohttp (>=0.3.0)", "tornado (>=4.5.2)", "webtest (==2.0.35)", "webtest-aiohttp (==2.0.0)"]
 
 [[package]]
 name = "werkzeug"
@@ -1439,7 +1457,7 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [package.extras]
-dev = ["pytest", "pytest-timeout", "coverage", "tox", "sphinx", "pallets-sphinx-themes", "sphinx-issues"]
+dev = ["coverage", "pallets-sphinx-themes", "pytest", "pytest-timeout", "sphinx", "sphinx-issues", "tox"]
 watchdog = ["watchdog"]
 
 [[package]]
@@ -1451,7 +1469,7 @@ optional = false
 python-versions = ">=3.5"
 
 [package.extras]
-dev = ["pytest (>=4.6.2)", "black (>=19.3b0)"]
+dev = ["black (>=19.3b0)", "pytest (>=4.6.2)"]
 
 [[package]]
 name = "wmctrl"
@@ -1720,9 +1738,9 @@ loguru = [
     {file = "loguru-0.4.1-py3-none-any.whl", hash = "sha256:074b3caa6748452c1e4f2b302093c94b65d5a4c5a4d7743636b4121e06437b0e"},
     {file = "loguru-0.4.1.tar.gz", hash = "sha256:a6101fd435ac89ba5205a105a26a6ede9e4ddbb4408a6e167852efca47806d11"},
 ]
-mako = [
-    {file = "Mako-1.1.4-py2.py3-none-any.whl", hash = "sha256:aea166356da44b9b830c8023cd9b557fa856bd8b4035d6de771ca027dfc5cc6e"},
-    {file = "Mako-1.1.4.tar.gz", hash = "sha256:17831f0b7087c313c0ffae2bcbbd3c1d5ba9eeac9c38f2eb7b50e8c99fe9d5ab"},
+Mako = [
+    {file = "Mako-1.2.2-py3-none-any.whl", hash = "sha256:8efcb8004681b5f71d09c983ad5a9e6f5c40601a6ec469148753292abc0da534"},
+    {file = "Mako-1.2.2.tar.gz", hash = "sha256:3724869b363ba630a272a5f89f68c070352137b8fd1757650017b7e06fda163f"},
 ]
 markupsafe = [
     {file = "MarkupSafe-1.1.1-cp27-cp27m-macosx_10_6_intel.whl", hash = "sha256:09027a7803a62ca78792ad89403b1b7a73a01c8cb65909cd876f7fcebd79b161"},
@@ -2093,6 +2111,10 @@ rope = [
     {file = "rope-0.16.0-py2-none-any.whl", hash = "sha256:ae1fa2fd56f64f4cc9be46493ce54bed0dd12dee03980c61a4393d89d84029ad"},
     {file = "rope-0.16.0-py3-none-any.whl", hash = "sha256:52423a7eebb5306a6d63bdc91a7c657db51ac9babfb8341c9a1440831ecf3203"},
     {file = "rope-0.16.0.tar.gz", hash = "sha256:d2830142c2e046f5fc26a022fe680675b6f48f81c7fc1f03a950706e746e9dfe"},
+]
+setuptools = [
+    {file = "setuptools-65.3.0-py3-none-any.whl", hash = "sha256:2e24e0bec025f035a2e72cdd1961119f557d78ad331bb00ff82efb2ab8da8e82"},
+    {file = "setuptools-65.3.0.tar.gz", hash = "sha256:7732871f4f7fa58fb6bdcaeadb0161b2bd046c85905dbaa066bdcbcc81953b57"},
 ]
 six = [
     {file = "six-1.15.0-py2.py3-none-any.whl", hash = "sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced"},
