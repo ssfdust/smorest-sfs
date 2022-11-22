@@ -36,7 +36,7 @@ meinheld==1.0.2
 openpyxl==3.0.6; python_version >= "3.6"
 passlib==1.7.4
 pendulum==2.1.2; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0")
-pillow==9.0.1; python_version >= "3.6"
+pillow==9.3.0; python_version >= "3.6"
 psycopg2-binary==2.8.6; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.4.0")
 pyexcel-io==0.6.4; python_version >= "3.6"
 pyexcel-xlsx==0.5.8
