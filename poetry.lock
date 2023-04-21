@@ -2067,15 +2067,20 @@ url = ["furl (>=0.4.1)"]
 
 [[package]]
 name = "sqlparse"
-version = "0.3.1"
-description = "Non-validating SQL parser"
+version = "0.4.4"
+description = "A non-validating SQL parser."
 category = "main"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+python-versions = ">=3.5"
 files = [
-    {file = "sqlparse-0.3.1-py2.py3-none-any.whl", hash = "sha256:022fb9c87b524d1f7862b3037e541f68597a730a8843245c349fc93e1643dc4e"},
-    {file = "sqlparse-0.3.1.tar.gz", hash = "sha256:e162203737712307dfe78860cc56c8da8a852ab2ee33750e33aeadf38d12c548"},
+    {file = "sqlparse-0.4.4-py3-none-any.whl", hash = "sha256:5430a4fe2ac7d0f93e66f1efc6e1338a41884b7ddf2a350cedd20ccc4d9d28f3"},
+    {file = "sqlparse-0.4.4.tar.gz", hash = "sha256:d446183e84b8349fa3061f0fe7f06ca94ba65b426946ffebe6e3e8295332420c"},
 ]
+
+[package.extras]
+dev = ["build", "flake8"]
+doc = ["sphinx"]
+test = ["pytest", "pytest-cov"]
 
 [[package]]
 name = "stack-data"
@@ -2354,4 +2359,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "a9d8f146c47ed1584a9ac72e5bff66d25f8802678d790a361cb491b728dd8b3e"
+content-hash = "3d2de5509ac660a68396d13df2da1b63f4b26e46b5a747147255c229d7306e4e"
